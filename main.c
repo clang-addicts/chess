@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdbool.h> 
+#include <windows.h>
 
 #include "g.h"
 #include "log.h"
@@ -32,10 +33,37 @@ void* network_find_opponet() {
     printf("find net opponet!\n");   
     return NULL;
 }
-void screen_board() {
-    printf("printing board screen!\n");
-    printf("Hello world");
+void gotoxy(short X, short Y)
+{
+	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),(COORD){X,Y});
 }
+void SetColor(int color) 
+{
+	SetConsoleTextAttribute (GetStdHandle (STD_OUTPUT_HANDLE), color);
+}
+void screen_board() {
+    system("cls");
+    SetColor(159);
+    int i;
+    for(i=0;i<=119;i++)
+    {
+        printf(" ");
+        gotoxy(i,29);
+        printf(" ");
+        gotoxy(i,0);
+    }
+    gotoxy(0,0);
+    for(i=0;i<=29;i++)
+    {
+        printf("  \n");
+        gotoxy(118,i);
+        printf("  \n");
+        gotoxy(0,i);
+    }
+    scanf("%d",i);
+    gotoxy(0,0);
+}
+
 void screen_select_order() {
     printf("printing play order!\n");   
 
