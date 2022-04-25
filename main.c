@@ -15,7 +15,7 @@ void screen_menu() {
 }
 int select_menu() {
     int sel;
-    scanf("%d", sel);
+    scanf("%d", &sel);
 
     switch(sel) {
         case 1: return MENU_PLAY_ONLINE;
@@ -27,7 +27,6 @@ int select_menu() {
 }
 void screen_find_opponet() {
     printf("printing find opponet screen!\n");   
-
 }
 void* network_find_opponet() {
     printf("find net opponet!\n");   
