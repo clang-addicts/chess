@@ -1,6 +1,7 @@
 BINARY_NAME=chess
 FILES=	main.c\
-		log.c
+		log.c\
+		screen.c
 
 all:
 	gcc -o $(BINARY_NAME) $(FILES)

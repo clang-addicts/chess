@@ -1,6 +1,8 @@
 #ifndef __CHESS_LOG__
 #define __CHESS_LOG__
 
+#define PATH_LOG_DIR "C:\\\\log"
+
 #ifndef LOG_EMERG
 #define LOG_EMERG 0
 #endif
@@ -31,5 +33,7 @@ void log_general(int priority, char *str, ...);
 
 void log_debug(int priority, const char *function, int line, char *str, ...);
 #define logd(pri, str, ...) log_debug(pri, __func__, __LINE__, str, #__VA_ARGS__)
+
+void init_log();
 
 #endif // __CHESS_LOG__

@@ -1,5 +1,9 @@
 #include <stdio.h>
 #include <stdarg.h>
+#include <time.h>
+#include <fileapi.h>
+#include <errhandlingapi.h>
+#include <WinError.h>
 
 #include "log.h"
 
@@ -18,6 +22,24 @@ static const char* get_string_priority(int priority)
     }
 }
 
+static void write_to_file(char *str, size_t slen)
+{
+    FILE *fptr          = NULL;
+    char file_name[32]  = {0};
+    time_t mt           = time(NULL);
+    struct tm mtms      = *localtime(&mt);
+
+    snprintf(file_name, sizeof(file_name), PATH_LOG_DIR"\\%04d%02d%02d.log", mtms.tm_year+1900, mtms.tm_mon+1, mtms.tm_mday);
+
+    fptr = fopen(file_name, "a");
+    if(!fptr) return;
+
+    str[slen-1] = '\0'; // safety mesure
+    fputs(str, fptr);
+
+    fclose(fptr);
+}
+
 void log_general(int priority, char *fmt, ...)
 {
     va_list vlist;
@@ -31,7 +53,9 @@ void log_general(int priority, char *fmt, ...)
     pos += vsnprintf(str+pos, sizeof(str)-pos, fmt, vlist);
     va_end(vlist);
 
-    printf("%s\n", str);
+    str[pos]='\n';
+    //printf("%s", str);
+    write_to_file(str, sizeof(str));
 }
 
 void log_debug(int priority, const char *function, int line, char *fmt, ...)
@@ -52,5 +76,21 @@ void log_debug(int priority, const char *function, int line, char *fmt, ...)
     pos += vsnprintf(str+pos, sizeof(str)-pos, fmt, vlist);
     va_end(vlist);
 
-    printf("%s\n", str);
+    str[pos]='\n';
+    //printf("%s", str);
+    write_to_file(str, sizeof(str));
+}
+
+void init_log()
+{
+    int error = 0;
+
+    if(!CreateDirectoryA(PATH_LOG_DIR, NULL)) {
+        error = GetLastError();
+        switch(error) {
+            case ERROR_PATH_NOT_FOUND: {
+                return;
+            }
+        }
+    }
 }
