@@ -18,63 +18,17 @@ int select_menu() {
         default: return MENU_EXIT;
     }
 }
-void screen_find_opponet() {
-    printf("printing find opponet screen!\n");   
-}
 void* network_find_opponet() {
     printf("find net opponet!\n");   
     return NULL;
-}
-void gotoxy(short X, short Y)
-{
-	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),(COORD){X,Y});
-}
-void SetColor(int color) 
-{
-	SetConsoleTextAttribute (GetStdHandle (STD_OUTPUT_HANDLE), color);
-}
-void screen_board() {
-    system("cls");
-    SetColor(159);
-    int i;
-    for(i=0;i<=119;i++)
-    {
-        printf(" ");
-        gotoxy(i,29);
-        printf(" ");
-        gotoxy(i,0);
-    }
-    gotoxy(0,0);
-    for(i=0;i<=29;i++)
-    {
-        printf("  \n");
-        gotoxy(118,i);
-        printf("  \n");
-        gotoxy(0,i);
-    }
-    scanf("%d",i);
-    gotoxy(0,0);
-}
-
-void screen_select_order() {
-    printf("printing play order!\n");   
-
 }
 int select_play_order(int mode, void *op_info) {
     printf("select play order!\n");   
     return 0;
 }
-void screen_settings() {
-    printf("printing settings screen!\n");   
-
-}
 int select_settings() {
     printf("configure settings!\n");   
     return 0;
-}
-void screen_info() {
-    printf("printing info/credit screen\n");   
-
 }
 int select_info() {
     printf("credit/info exit option!\n");   
