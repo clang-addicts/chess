@@ -34,7 +34,8 @@ void* network_find_opponet() {
     return NULL;
 }
 void screen_board() {
-    printf("printing board screen!\n");   
+    printf("printing board screen!\n");
+    printf("Hello world");
 }
 void screen_select_order() {
     printf("printing play order!\n");   
