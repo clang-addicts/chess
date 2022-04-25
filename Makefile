@@ -6,4 +6,4 @@ all:
 	gcc -o $(BINARY_NAME) $(FILES)
 
 clean:
-	rm -rf $(BINARY_NAME)
+	del /f $(BINARY_NAME).exe
