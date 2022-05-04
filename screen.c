@@ -2,8 +2,7 @@
 
 void screen_menu() {
     clear();
-    eBOX(0,0,60,28,BGO_COLOR_GRAY," ");
-
+    eBOX(0,0,75,40,BGO_COLOR_GRAY," ");
     setColor(15);
     gotoXY(3,4);
     printf("select? \n");
@@ -17,24 +16,10 @@ void screen_menu() {
 
 void screen_board() {
     clear();
-    setColor(159);
-    int i;
-    for(i=0;i<=119;i++)
-    {
-        printf(" ");
-        gotoXY(i,29);
-        printf(" ");
-        gotoXY(i,0);
-    }
-    gotoXY(0,0);
-    for(i=0;i<=29;i++)
-    {
-        printf("  \n");
-        gotoXY(118,i);
-        printf("  \n");
-        gotoXY(0,i);
-    }
-    scanf("%d",i);
+    eBOX(0,0,75,40,119," ");    //(150,40)
+    eBOX(3,3,38,34,128," ");    //(76,34)
+    chessBoard(5,4,72,32,240," ");      //(5,4,72,32,240," ")
+    scanf("%d",1);
     gotoXY(0,0);
 }
 

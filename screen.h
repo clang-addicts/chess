@@ -77,6 +77,40 @@ static void eBOX(int posX, int posY, int length, int height, int color, const ch
     }
 }
 
+// Chess Board
+static void chessBoard(int posX, int posY, int length, int height, int color, char* side)	// length, height = multiple of 8 only
+{
+	setColor(color);
+	gotoXY(posX,posY);
+	int a,b,i,j;	// i = 체스판 x 좌표, j = 체스판 y 좌표 
+	 
+	for(a=0;a<4;a++)
+	{
+		for(i=0;i<posX+length*7/8;i++)
+		{
+			for(j=0;j<height/8;j++)
+			{
+				if(i%(length/4)==0)     //짝수 줄
+				{
+					gotoXY(posX+i,posY+j+a*height/4);
+					for(b=0;b<length/8;b++)
+					{
+						printf("%s",side);
+					}
+                }
+                else if(i%(length/4)==length/8)     //홀수 줄
+				{		
+					gotoXY(posX+i,posY+j+height/8+a*height/4);
+					for(b=0;b<length/8;b++)	
+					{				
+						printf("%s",side);	
+					}
+				}
+			}	
+		}
+	}
+}
+
 void screen_menu();
 void screen_board();
 void screen_select_order();
