@@ -5,34 +5,20 @@
 #include "g.h"
 #include "log.h"
 #include "screen.h"
+#include "select.h"
+#include "network.h"
 
-int select_menu() {
-    int sel;
-    scanf("%d", &sel);
-
-    switch(sel) {
-        case 1: return MENU_PLAY_ONLINE;
-        case 2: return MENU_PLAY_SINGLE;
-        case 3: return MENU_SETTINGS;
-        case 4: return MENU_INFO;
-        default: return MENU_EXIT;
+static const char* get_menu_selection_string(int menu_selection)
+{
+    switch(menu_selection) {
+        case MENU_EXIT: return "MENU_EXIT";
+        case MENU_INFO: return "MENU_INFO";
+        case MENU_SETTINGS: return "MENU_SETTINGS";
+        case MENU_PLAY_SINGLE: return "MENU_PLAY_SINGLE";
+        case MENU_PLAY_ONLINE: return "MENU_PLAY_ONLINE";
+        case MENU_MAX: return "MENU_MAX";
+        default: return "MENU_UNKNOWN";
     }
-}
-void* network_find_opponet() {
-    printf("find net opponet!\n");   
-    return NULL;
-}
-int select_play_order(int mode, void *op_info) {
-    printf("select play order!\n");   
-    return 0;
-}
-int select_settings() {
-    printf("configure settings!\n");   
-    return 0;
-}
-int select_info() {
-    printf("credit/info exit option!\n");   
-    return 0;
 }
 
 static int menu() {
@@ -47,15 +33,6 @@ int main(int argc, char **argv)
 
     init_log();
     log(LOG_NOTICE, "starting program"); 
-
-    log(LOG_WARNING, "disable cursor"); 
-    setCursor(0);
-    log(LOG_NOTICE, "disabled cursor"); 
-
-    log(LOG_WARNING, "initiate border"); 
-    //init_border(120, 30);
-    init_border(150, 40);
-    log(LOG_NOTICE, "initiated border"); 
 
     log(LOG_NOTICE, "starting main switch loop, opening menu"); 
     while(true) {

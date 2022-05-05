@@ -1,6 +1,13 @@
 #ifndef __CHESS_LOG__
 #define __CHESS_LOG__
 
+#include <stdio.h>
+#include <stdarg.h>
+#include <time.h>
+#include <fileapi.h>
+#include <errhandlingapi.h>
+#include <WinError.h>
+
 #define PATH_LOG_DIR "C:\\\\log"
 
 #ifndef LOG_EMERG

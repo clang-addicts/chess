@@ -1,10 +1,3 @@
-#include <stdio.h>
-#include <stdarg.h>
-#include <time.h>
-#include <fileapi.h>
-#include <errhandlingapi.h>
-#include <WinError.h>
-
 #include "log.h"
 
 static const char* get_string_priority(int priority)
