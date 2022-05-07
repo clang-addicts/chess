@@ -9,6 +9,9 @@
 // background color only
 #define BGO_COLOR_GRAY 119
 
+// background and front
+#define BF_COLOR_GRAY_WHITE 143
+
 void screen_menu();
 void screen_board();
 void screen_select_order();

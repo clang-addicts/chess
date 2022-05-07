@@ -54,6 +54,22 @@ static void eBOX(int posX, int posY, int length, int height, int color, const ch
     }
 }
 
+// ashz: fill box
+static void fBOX(int posX, int posY, int length, int height, int color, const char* outline)
+{
+    int i = 0;
+    int j = 0;
+
+    setColor(color);
+
+    for(i=0; i<height; i++) {
+        gotoXY(posX+i, posY);
+        for (j = 0; j < length * 2; j++) {
+            printf(outline);
+        }
+    }
+}
+
 // ashz: set screen max buffer size (to remove scroll bar)
 static void setBorder(int INX, int INY)
 {
@@ -72,15 +88,17 @@ static void setBorder(int INX, int INY)
 
 void screen_menu()
 {
+
     log(LOG_WARNING, "disable cursor"); 
     setCursor(0);
     log(LOG_NOTICE, "disabled cursor"); 
 
     log(LOG_WARNING, "initiate border");
-    setBorder(150, 40);
+    setBorder(220, 50);
     log(LOG_NOTICE, "initiated border"); 
 
     clear();
+    fBOX(0,0,220,50,BF_COLOR_GRAY_WHITE," ");
     eBOX(0,0,75,40,BGO_COLOR_GRAY," ");
     setColor(15);
     gotoXY(3,4);
