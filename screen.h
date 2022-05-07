@@ -3,15 +3,36 @@
 
 #include <windows.h>
 #include <stdio.h>
+#include <stdarg.h>
+#include <conio.h>
+#include <unistd.h>
 
 #include "log.h"
 
 // background color only
-#define BGO_COLOR_GRAY 119
+#define BGO_GRAY 119
 
 // background and front
-#define BF_COLOR_GRAY_WHITE 143
+#define BF_GRAY_WHITE 143
+#define BF_GREEN_BLACK 160
+#define BF_LGRAY_BLACK 112
 
+// 색갈 지정 (0~255, window color)
+// 사용 예시: setColor(48);
+#define setColor(color)	SetConsoleTextAttribute(GetStdHandle (STD_OUTPUT_HANDLE), color)
+
+// 출력 위치 변경 (x는 좌우, y는 상하) 
+// 사용 예시: gotoXY(5,2);
+#define gotoXY(X, Y) SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), (COORD){(short)X,(short)Y})
+
+#define printc(x,y,c,str,...) do{\
+    gotoXY(x,y);\
+    setColor(c);\
+    printf(str,##__VA_ARGS__);\
+}while(0)
+
+void eBOX(int posX, int posY, int length, int height, int color, char outline);
+void fBOX(int posX, int posY, int length, int height, int color, char outline);
 void screen_menu();
 void screen_board();
 void screen_select_order();

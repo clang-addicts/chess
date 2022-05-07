@@ -4,6 +4,19 @@
 #include <stdio.h>
 
 #include "g.h"
+#include "screen.h"
+
+// key defines
+#define KEY_ARROW_UP 72
+#define KEY_ARROW_DOWN 80
+#define KEY_ARROW_LEFT 75
+#define KEY_ARROW_RIGHT 77
+#define KEY_ENTER 13
+#define KEY_ESC 27
+
+// menu values
+#define MENU_ARRAY_X_SIZE 2
+#define MENU_ARRAY_Y_SIZE 3
 
 int select_play_order(int mode, void *op_info);
 int select_settings(void);

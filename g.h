@@ -1,7 +1,6 @@
 #ifndef __G_H__ // global variables
 #define __G_H__
 
-
 enum {
     MENU_EXIT = 0,
     MENU_INFO,

@@ -1,18 +1,5 @@
 #include "screen.h"
 
-// 색갈 지정 (0~255, window color)
-// 사용 예시: setColor(48);
-static void setColor(int color) 
-{
-	SetConsoleTextAttribute (GetStdHandle (STD_OUTPUT_HANDLE), color);
-}
-// 출력 위치 변경 (x는 좌우, y는 상하) 
-// 사용 예시: gotoXY(5,2);
-static void gotoXY(int X, int Y)
-{
-	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), (COORD){(short)X,(short)Y});
-}
-
 // 커서 숨기기
 // 사용 예시: setCursor(0);
 static void setCursor(int input)
@@ -20,54 +7,16 @@ static void setCursor(int input)
     CONSOLE_CURSOR_INFO cinfo;
     GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cinfo);
     cinfo.bVisible = (BOOL)input;
+
+    log(LOG_INFO, "disabling cursor"); 
     SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cinfo);
 }
 
 // ashz: clear screen 
 static void clear()
 {
+    log(LOG_INFO, "clearing screen");
     system("cls");
-}
-
-// ashz: edge box
-static void eBOX(int posX, int posY, int length, int height, int color, const char* outline)
-{
-    int i = 0;
-
-    setColor(color);
-
-    gotoXY(posX, posY);
-    for(i=0; i<length*2; i++) {
-        printf(outline);
-    }
-
-    for(i=1; i<(height-1); i++) {
-        gotoXY(posX, posY+i);
-        printf("%s%s", outline, outline);
-        gotoXY((posX+(length*2))-2, posY+i);
-        printf("%s%s", outline, outline);
-    }
-
-    gotoXY(posX, posY+(height-1));
-    for(i=0; i<length*2; i++) {
-        printf(outline);
-    }
-}
-
-// ashz: fill box
-static void fBOX(int posX, int posY, int length, int height, int color, const char* outline)
-{
-    int i = 0;
-    int j = 0;
-
-    setColor(color);
-
-    for(i=0; i<height; i++) {
-        gotoXY(posX+i, posY);
-        for (j = 0; j < length * 2; j++) {
-            printf(outline);
-        }
-    }
 }
 
 // ashz: set screen max buffer size (to remove scroll bar)
@@ -79,36 +28,85 @@ static void setBorder(int INX, int INY)
 		return;
 	}
 	ConsoleRectangle = (SMALL_RECT) {0,0,INX-1,INY-1};
+
+    log(LOG_WARNING, "initiating border");
 	
-	//Pre-Designate Buffers or Cordinates into the system
+	// Pre-designate buffers and/or cordinates into the system for output
 	SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), (COORD){(short)INX, (short)INY});
 	SetConsoleWindowInfo(GetStdHandle(STD_OUTPUT_HANDLE), TRUE, &ConsoleRectangle);
 	SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), (COORD){(short)INX, (short)INY});
 }
 
+// ashz: edge box
+void eBOX(int posX, int posY, int length, int height, int color, char outline)
+{
+    int i = 0;
+
+    setColor(color);
+
+    gotoXY(posX, posY);
+    for(i=0; i<length; i++) {
+        printf("%c", outline);
+    }
+
+    for(i=1; i<(height-1); i++) {
+        gotoXY(posX, posY+i);
+        printf("%c%c", outline, outline);
+        gotoXY((posX+length)-2, posY+i);
+        printf("%c%c", outline, outline);
+    }
+
+    gotoXY(posX, posY+(height-1));
+    for(i=0; i<length; i++) {
+        printf("%c", outline);
+    }
+}
+
+// ashz: fill box
+void fBOX(int posX, int posY, int length, int height, int color, char outline)
+{
+    char *buf = NULL;
+    int i = 0;
+
+    // create printable string
+    buf = (char*)malloc((size_t)(length+1));
+    for(i=0; i<length; i++) {
+        buf[i]=outline; 
+    }
+    buf[i]='\0';
+
+    // set color
+    setColor(color);
+
+    // print using gotoXY
+    for(i=0; i<height; i++) {
+        gotoXY(posX, posY+i);
+        printf("%s", buf);
+    }
+
+    // free allocated memory
+    free(buf);
+}
+
 void screen_menu()
 {
-
-    log(LOG_WARNING, "disable cursor"); 
+    // init
     setCursor(0);
-    log(LOG_NOTICE, "disabled cursor"); 
-
-    log(LOG_WARNING, "initiate border");
     setBorder(220, 50);
-    log(LOG_NOTICE, "initiated border"); 
-
     clear();
-    fBOX(0,0,220,50,BF_COLOR_GRAY_WHITE," ");
-    eBOX(0,0,75,40,BGO_COLOR_GRAY," ");
-    setColor(15);
-    gotoXY(3,4);
-    printf("select? \n");
-    printf("1.  1v1\n");
-    printf("2.  1vCPU\n");
-    printf("3.  setting\n");
-    printf("4.  credit\n");
-    printf("5.  exit\n");
-    printf("> ");
+
+    // show
+    fBOX(0, 0, 220, 50, BF_GRAY_WHITE, ' ');
+    fBOX(20, 28, 80, 5, BF_GREEN_BLACK, ' ');
+    fBOX(120, 28, 80, 5, BF_LGRAY_BLACK, ' ');
+    fBOX(20, 35, 80, 5, BF_LGRAY_BLACK, ' ');
+    fBOX(120, 35, 80, 5, BF_LGRAY_BLACK, ' ');
+    fBOX(70, 42, 80, 5, BF_LGRAY_BLACK, ' ');
+    printc(57, 30, BF_GREEN_BLACK, "1 vs 1");
+    printc(156, 30, BF_LGRAY_BLACK, "1 vs CPU");
+    printc(56, 37, BF_LGRAY_BLACK, "Settings");
+    printc(155, 37, BF_LGRAY_BLACK, "Information");
+    printc(108, 44, BF_LGRAY_BLACK, "Quit");
 }
 
 void screen_select_order() {
@@ -162,8 +160,8 @@ static void chessBoard(int posX, int posY, int length, int height, int color, ch
 }
 void screen_board() {
     clear();
-    eBOX(0,0,75,40,119," ");    //(150,40)
-    eBOX(3,3,38,34,128," ");    //(76,34)
+    eBOX(0,0,150,40,119,' ');    //(150,40)
+    eBOX(3,3,76,34,128,' ');    //(76,34)
     chessBoard(5,4,72,32,240," ");      //(5,4,72,32,240," ")
     scanf("%d",1);
     gotoXY(0,0);
