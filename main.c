@@ -7,6 +7,7 @@
 #include "screen.h"
 #include "select.h"
 #include "network.h"
+#include "game.h"
 
 static const char* get_menu_selection_string(int menu_selection)
 {
@@ -58,6 +59,7 @@ int main(int argc, char **argv)
                 screen_board();
                 screen_select_order();
                 loop = select_play_order(GAMEMODE_CPU, NULL);
+                game();
                 break;
             }
             case MENU_SETTINGS: {

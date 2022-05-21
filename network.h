@@ -3,8 +3,6 @@
 
 #include <stdio.h>
 
-#include "network.h"
-
 void* network_find_opponet(void);
 
 #endif // __NETWORK_H__
