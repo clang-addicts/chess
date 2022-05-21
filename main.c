@@ -42,8 +42,8 @@ int main(int argc, char **argv)
                 log(LOG_NOTICE, "selected %s", get_menu_selection_string(loop)); 
                 loop = 0;
 
-                break; // TODO
                 screen_find_opponet();
+                select_input_ip();
                 opponet_info = network_find_opponet();
                 if(opponet_info != NULL) {
                     screen_board();
@@ -58,8 +58,8 @@ int main(int argc, char **argv)
                 log(LOG_NOTICE, "selected %s", get_menu_selection_string(loop)); 
                 screen_board();
                 screen_select_order();
-                loop = select_play_order(GAMEMODE_CPU, NULL);
                 game();
+                loop = select_play_order(GAMEMODE_CPU, NULL);
                 break;
             }
             case MENU_SETTINGS: {
