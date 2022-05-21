@@ -41,6 +41,7 @@ void screen_menu();
 void screen_board();
 void screen_select_order();
 void screen_info();
+void screen_server_or_client();
 void screen_find_opponet();
 void screen_settings();
 

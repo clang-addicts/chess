@@ -126,6 +126,20 @@ void screen_info() {
     printf("printing info/credit screen\n");   
 }
 
+void screen_server_or_client()
+{
+    // option box
+    fBOX(70, 16, 80, 20, BF_LYELLOW_BLACK, ' ');
+    fBOX(72, 17, 80, 20, BF_LWHITE_BLACK, ' ');
+    printc(76, 19, BF_LWHITE_BLACK, "Select Endpoint Mode");
+
+    // input boxes
+    printc(76, 23, BF_LWHITE_BLACK, "IP");
+    fBOX(76, 24, 50, 1, BF_BLACK_WHITE, ' ');
+    printc(76, 26, BF_LWHITE_BLACK, "Port");
+    fBOX(76, 27, 50, 1, BF_BLACK_WHITE, ' ');
+}
+
 void screen_find_opponet()
 {
     // option box
@@ -134,12 +148,10 @@ void screen_find_opponet()
     printc(76, 19, BF_LWHITE_BLACK, "Input your opponet IP:PORT information");
 
     // input boxes
-    printc(76, 24, BF_LWHITE_BLACK, "IP");
-    fBOX(76, 25, 50, 1, BF_BLACK_WHITE, ' ');
-    printc(76, 26, BF_LWHITE_BLACK, "PORT");
+    printc(76, 23, BF_LWHITE_BLACK, "IP");
+    fBOX(76, 24, 50, 1, BF_BLACK_WHITE, ' ');
+    printc(76, 26, BF_LWHITE_BLACK, "Port");
     fBOX(76, 27, 50, 1, BF_BLACK_WHITE, ' ');
-
-    return;
 }
 
 void screen_settings() {

@@ -187,5 +187,12 @@ int select_menu()
 
 int select_input_ip()
 {
-    get_input();
+    char ip[32] = {0};
+    int port = 0;
+
+    // TODO: need a keyboard reader instead of scanf
+    gotoXY(77, 24); scanf("%s", ip);
+    gotoXY(77, 27); scanf("%d", &port);
+
+    
 }
