@@ -3,7 +3,8 @@ FILES=	main.c\
 		log.c\
 		screen.c\
 		select.c\
-		network.c
+		network.c\
+		game.c
 
 all:
 	gcc -o $(BINARY_NAME) $(FILES)

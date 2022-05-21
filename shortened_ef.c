@@ -40,7 +40,7 @@ enum KEY{
 	SPACE,
 	BACK
 };
-void pause(KEY _KEY){
+void pause( _KEY){
 	short WAIT_KEY;
 	switch(_KEY){
 		case ENTER: WAIT_KEY = 13; break;

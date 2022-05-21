@@ -37,6 +37,8 @@ static void setBorder(int INX, int INY)
 	SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), (COORD){(short)INX, (short)INY});
 }
 
+
+
 // ashz: edge box
 void eBOX(int posX, int posY, int length, int height, int color, char outline)
 {
@@ -158,11 +160,12 @@ static void chessBoard(int posX, int posY, int length, int height, int color, ch
 		}
 	}
 }
+
 void screen_board() {
     clear();
-    eBOX(0,0,150,40,119,' ');    //(150,40)
-    eBOX(3,3,76,34,128,' ');    //(76,34)
-    chessBoard(5,4,72,32,240," ");      //(5,4,72,32,240," ")
+    eBOX(0,0,100,50,143,' ');    //(220,50)
+    eBOX(100,0,120,50,119,' ');    //(76,34)
+    chessBoard(2,1,96,48,240," ");      //(5,4,72,32,240," ")
     scanf("%d",1);
     gotoXY(0,0);
 }
