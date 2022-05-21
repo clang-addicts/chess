@@ -7,6 +7,13 @@
 #include "log.h"
 #include "screen.h"
 
+typedef struct Piece {
+    const char *name;
+    const char *team;
+    int type;
+    bool isDead;
+}Piece;
+
 void game(){
 
 }
