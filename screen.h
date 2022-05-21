@@ -16,6 +16,10 @@
 #define BF_GRAY_WHITE 143
 #define BF_GREEN_BLACK 160
 #define BF_LGRAY_BLACK 112
+#define BF_LYELLOW_BLACK 224
+#define BF_LCYAN_BLACK 176
+#define BF_LWHITE_BLACK 240
+#define BF_BLACK_WHITE 15
 
 // 색갈 지정 (0~255, window color)
 // 사용 예시: setColor(48);

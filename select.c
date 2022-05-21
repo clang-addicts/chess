@@ -45,28 +45,28 @@ static void select_menu_move(int prev, int cur)
 
     switch(cur) {
         case 1: {
-            fBOX(20, 28, 80, 5, BF_GREEN_BLACK, ' ');
-            printc(57, 30, BF_GREEN_BLACK, "1 vs 1");
+            fBOX(20, 28, 80, 5, BF_LCYAN_BLACK, ' ');
+            printc(57, 30, BF_LCYAN_BLACK, "1 vs 1");
             break;
         }
         case 2: {
-            fBOX(120, 28, 80, 5, BF_GREEN_BLACK, ' ');
-            printc(156, 30, BF_GREEN_BLACK, "1 vs CPU");
+            fBOX(120, 28, 80, 5, BF_LCYAN_BLACK, ' ');
+            printc(156, 30, BF_LCYAN_BLACK, "1 vs CPU");
             break;
         }
         case 3: {
-            fBOX(20, 35, 80, 5, BF_GREEN_BLACK, ' ');
-            printc(56, 37, BF_GREEN_BLACK, "Settings");
+            fBOX(20, 35, 80, 5, BF_LCYAN_BLACK, ' ');
+            printc(56, 37, BF_LCYAN_BLACK, "Settings");
             break;
         }
         case 4: {
-            fBOX(120, 35, 80, 5, BF_GREEN_BLACK, ' ');
-            printc(155, 37, BF_GREEN_BLACK, "Information");
+            fBOX(120, 35, 80, 5, BF_LCYAN_BLACK, ' ');
+            printc(155, 37, BF_LCYAN_BLACK, "Information");
             break;
         }
         case 5: {
-            fBOX(70, 42, 80, 5, BF_GREEN_BLACK, ' ');
-            printc(108, 44, BF_GREEN_BLACK, "Quit");
+            fBOX(70, 42, 80, 5, BF_LCYAN_BLACK, ' ');
+            printc(108, 44, BF_LCYAN_BLACK, "Quit");
             break;
         }
         default: {
@@ -176,10 +176,16 @@ int select_menu()
     }
 
     switch(current) {
+        case 0:
         case 1: return MENU_PLAY_ONLINE;
         case 2: return MENU_PLAY_SINGLE;
         case 3: return MENU_SETTINGS;
         case 4: return MENU_INFO;
         default: return MENU_EXIT;
     }
+}
+
+int select_input_ip()
+{
+    get_input();
 }

@@ -37,8 +37,6 @@ static void setBorder(int INX, int INY)
 	SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), (COORD){(short)INX, (short)INY});
 }
 
-
-
 // ashz: edge box
 void eBOX(int posX, int posY, int length, int height, int color, char outline)
 {
@@ -92,19 +90,28 @@ void fBOX(int posX, int posY, int length, int height, int color, char outline)
 
 void screen_menu()
 {
-    // init
+    // program init
     setCursor(0);
     setBorder(220, 50);
     clear();
 
-    // show
+    // print background
     fBOX(0, 0, 220, 50, BF_GRAY_WHITE, ' ');
-    fBOX(20, 28, 80, 5, BF_GREEN_BLACK, ' ');
+
+    // print options box
+    fBOX(18, 27, 80, 5, BF_LYELLOW_BLACK, ' ');
+    fBOX(20, 28, 80, 5, BF_LCYAN_BLACK, ' ');
+    fBOX(118, 27, 80, 5, BF_LYELLOW_BLACK, ' ');
     fBOX(120, 28, 80, 5, BF_LGRAY_BLACK, ' ');
+    fBOX(18, 34, 80, 5, BF_LYELLOW_BLACK, ' ');
     fBOX(20, 35, 80, 5, BF_LGRAY_BLACK, ' ');
+    fBOX(118, 34, 80, 5, BF_LYELLOW_BLACK, ' ');
     fBOX(120, 35, 80, 5, BF_LGRAY_BLACK, ' ');
+    fBOX(68, 41, 80, 5, BF_LYELLOW_BLACK, ' ');
     fBOX(70, 42, 80, 5, BF_LGRAY_BLACK, ' ');
-    printc(57, 30, BF_GREEN_BLACK, "1 vs 1");
+
+    // print option description
+    printc(57, 30, BF_LCYAN_BLACK, "1 vs 1");
     printc(156, 30, BF_LGRAY_BLACK, "1 vs CPU");
     printc(56, 37, BF_LGRAY_BLACK, "Settings");
     printc(155, 37, BF_LGRAY_BLACK, "Information");
@@ -119,8 +126,20 @@ void screen_info() {
     printf("printing info/credit screen\n");   
 }
 
-void screen_find_opponet() {
-    printf("printing find opponet screen!\n");   
+void screen_find_opponet()
+{
+    // option box
+    fBOX(70, 16, 80, 20, BF_LYELLOW_BLACK, ' ');
+    fBOX(72, 17, 80, 20, BF_LWHITE_BLACK, ' ');
+    printc(76, 19, BF_LWHITE_BLACK, "Input your opponet IP:PORT information");
+
+    // input boxes
+    printc(76, 24, BF_LWHITE_BLACK, "IP");
+    fBOX(76, 25, 50, 1, BF_BLACK_WHITE, ' ');
+    printc(76, 26, BF_LWHITE_BLACK, "PORT");
+    fBOX(76, 27, 50, 1, BF_BLACK_WHITE, ' ');
+
+    return;
 }
 
 void screen_settings() {

@@ -22,5 +22,6 @@ int select_play_order(int mode, void *op_info);
 int select_settings(void);
 int select_info(void);
 int select_menu(void);
+int select_input_ip(void);
 
 #endif // __SELECT_H__
