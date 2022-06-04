@@ -18,6 +18,7 @@
 #define MENU_ARRAY_X_SIZE 2
 #define MENU_ARRAY_Y_SIZE 3
 
+int get_input();
 int select_play_order(int mode, void *op_info);
 int select_settings(void);
 int select_info(void);

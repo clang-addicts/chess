@@ -159,50 +159,33 @@ void screen_settings() {
 }
 
 // Chess Board
-/*static void chessBoard(int x,int y,int color1, int color2){
+static void chessBoard(int x,int y,int color1, int color2){
     setColor(color1);
-    for(i=0;i<96;i++){
-
+    int i,j;
+    for(j=0;j<4;j++){
+        for(i=0;i<4;i++){
+            fBOX(x+i*24, y+j*12, 12, 6, color1,' ');   
+        }
+        for(i=0;i<4;i++){
+            fBOX(x+12+i*24, y+6+j*12 , 12, 6, color1,' ');   
+        }
     }
-}*/
-static void chessBoard(int posX, int posY, int length, int height, int color, char* side)	// length, height = multiple of 8 only
-{
-	setColor(color);
-	gotoXY(posX,posY);
-	int a,b,i,j;	// i = 체스판 x 좌표, j = 체스판 y 좌표 
-	 
-	for(a=0;a<4;a++)
-	{
-		for(i=0;i<posX+length*7/8;i++)
-		{
-			for(j=0;j<height/8;j++)
-			{
-				if(i%(length/4)==0)     //짝수 줄
-				{
-					gotoXY(posX+i,posY+j+a*height/4);
-					for(b=0;b<length/8;b++)
-					{
-						printf("%s",side);
-					}
-                }
-                else if(i%(length/4)==length/8)     //홀수 줄
-				{		
-					gotoXY(posX+i,posY+j+height/8+a*height/4);
-					for(b=0;b<length/8;b++)	
-					{				
-						printf("%s",side);	
-					}
-				}
-			}	
-		}
-	}
+    setColor(color2);
+    for(j=0;j<4;j++){
+        for(i=0;i<4;i++){
+            fBOX(x+12+i*24, y+j*12, 12, 6, color2,' ');   
+        }
+        for(i=0;i<4;i++){
+            fBOX(x+i*24, y+6+j*12 , 12, 6, color2,' ');   
+        }
+    }
 }
 
 
 
-void screen_board() {
+void screen_board(){
     clear();
-    eBOX(0,0,100,50,143,' ');    //(220,50)
-    eBOX(98,0,122,50,143,' ');    //(76,34)
-    chessBoard(2,1,96,48,240," ");      //(5,4,72,32,240," ")
+    eBOX(0,0,100,50,BF_LGRAY_BLACK,' ');    //(220,50)
+    eBOX(98,0,122,50,BF_LGRAY_BLACK,' ');    //(76,34)
+    chessBoard(2,1,BF_LWHITE_BLACK,BF_BLACK_WHITE);
 }

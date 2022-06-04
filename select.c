@@ -1,6 +1,6 @@
 #include "select.h"
 
-static int get_input()
+int get_input()
 {
     while(1) {
         if(kbhit()) {
