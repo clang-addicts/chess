@@ -102,20 +102,20 @@ void screen_menu()
     fBOX(18, 27, 80, 5, BF_LYELLOW_BLACK, ' ');
     fBOX(20, 28, 80, 5, BF_LCYAN_BLACK, ' ');
     fBOX(118, 27, 80, 5, BF_LYELLOW_BLACK, ' ');
-    fBOX(120, 28, 80, 5, BF_LGRAY_BLACK, ' ');
+    fBOX(120, 28, 80, 5, BF_LWHITE_BLACK, ' ');
     fBOX(18, 34, 80, 5, BF_LYELLOW_BLACK, ' ');
-    fBOX(20, 35, 80, 5, BF_LGRAY_BLACK, ' ');
+    fBOX(20, 35, 80, 5, BF_LWHITE_BLACK, ' ');
     fBOX(118, 34, 80, 5, BF_LYELLOW_BLACK, ' ');
-    fBOX(120, 35, 80, 5, BF_LGRAY_BLACK, ' ');
+    fBOX(120, 35, 80, 5, BF_LWHITE_BLACK, ' ');
     fBOX(68, 41, 80, 5, BF_LYELLOW_BLACK, ' ');
-    fBOX(70, 42, 80, 5, BF_LGRAY_BLACK, ' ');
+    fBOX(70, 42, 80, 5, BF_LWHITE_BLACK, ' ');
 
     // print option description
     printc(57, 30, BF_LCYAN_BLACK, "1 vs 1");
-    printc(156, 30, BF_LGRAY_BLACK, "1 vs CPU");
-    printc(56, 37, BF_LGRAY_BLACK, "Settings");
-    printc(155, 37, BF_LGRAY_BLACK, "Information");
-    printc(108, 44, BF_LGRAY_BLACK, "Quit");
+    printc(156, 30, BF_LWHITE_BLACK, "1 vs CPU");
+    printc(56, 37, BF_LWHITE_BLACK, "Settings");
+    printc(155, 37, BF_LWHITE_BLACK, "Information");
+    printc(108, 44, BF_LWHITE_BLACK, "Quit");
 }
 
 void screen_select_order() {
@@ -188,4 +188,32 @@ void screen_board(){
     eBOX(0,0,100,50,BF_LGRAY_BLACK,' ');    //(220,50)
     eBOX(98,0,122,50,BF_LGRAY_BLACK,' ');    //(76,34)
     chessBoard(2,1,BF_LWHITE_BLACK,BF_BLACK_WHITE);
+}
+
+void screen_network_mode()
+{
+    // secondary menu
+    fBOX(44, 8, 130, 30, BF_LYELLOW_BLACK, ' ');
+    fBOX(46, 9, 130, 30, BF_LGRAY_BLACK, ' ');
+
+    // options
+    fBOX(50, 11, 59, 26, BF_LWHITE_BLACK, ' ');
+    fBOX(113, 11, 59, 26, BF_LWHITE_BLACK, ' ');
+    printc(76, 24, BF_LWHITE_BLACK, "Server");
+    printc(140, 24, BF_LWHITE_BLACK, "Client");
+
+    // current option selection
+    eBOX(50, 11, 59, 26, BF_LCYAN_BLACK, ' ');
+}
+
+void screen_waiting_on_opponet()
+{
+    // secondary menu
+    fBOX(44, 8, 130, 30, BF_LYELLOW_BLACK, ' ');
+    fBOX(46, 9, 130, 30, BF_LGRAY_BLACK, ' ');
+    printc(80, 24, BF_LGRAY_BLACK, "Waiting on opponet...");
+
+    // tmp
+    int a;
+    scanf("%s", &a);
 }

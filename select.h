@@ -18,11 +18,16 @@
 #define MENU_ARRAY_X_SIZE 2
 #define MENU_ARRAY_Y_SIZE 3
 
+// network mode select values
+#define NMODE_ARRAY_X_SIZE 2
+#define NMODE_ARRAY_Y_SIZE 1
+
 int get_input();
 int select_play_order(int mode, void *op_info);
 int select_settings(void);
 int select_info(void);
 int select_menu(void);
 int select_input_ip(void);
+int select_network_mode(void);
 
 #endif // __SELECT_H__

@@ -46,5 +46,7 @@ void screen_info();
 void screen_server_or_client();
 void screen_find_opponet();
 void screen_settings();
+void screen_network_mode();
+void screen_waiting_on_opponet();
 
 #endif // __SCREEN_H__
