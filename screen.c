@@ -147,6 +147,12 @@ void screen_settings() {
 }
 
 // Chess Board
+/*static void chessBoard(int x,int y,int color1, int color2){
+    setColor(color1);
+    for(i=0;i<96;i++){
+
+    }
+}*/
 static void chessBoard(int posX, int posY, int length, int height, int color, char* side)	// length, height = multiple of 8 only
 {
 	setColor(color);
@@ -180,11 +186,11 @@ static void chessBoard(int posX, int posY, int length, int height, int color, ch
 	}
 }
 
+
+
 void screen_board() {
     clear();
     eBOX(0,0,100,50,143,' ');    //(220,50)
-    eBOX(100,0,120,50,119,' ');    //(76,34)
+    eBOX(98,0,122,50,143,' ');    //(76,34)
     chessBoard(2,1,96,48,240," ");      //(5,4,72,32,240," ")
-    scanf("%d",1);
-    gotoXY(0,0);
 }
