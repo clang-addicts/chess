@@ -31,6 +31,7 @@ int main(int argc, char **argv)
 {
     int loop = 0;
     void *opponet_info;
+    int mode = -1;
 
     init_log();
     log(LOG_NOTICE, "starting program"); 
@@ -42,8 +43,29 @@ int main(int argc, char **argv)
                 log(LOG_NOTICE, "selected %s", get_menu_selection_string(loop)); 
                 loop = 0;
 
-                screen_find_opponet();
-                select_input_ip();
+                screen_network_mode();
+                mode = select_network_mode();
+
+                switch(mode) {
+                    case NMODE_SERVER: {
+                        screen_waiting_on_opponet();
+                        break;
+                    }
+                    case NMODE_CLIENT: {
+                        screen_find_opponet();
+                        select_input_ip();
+                        break;
+                    }
+                    default: {
+                        loop = 1;
+                        break;
+                    }
+                }
+
+                if(loop) { // return to main menu
+                    break;
+                }
+
                 opponet_info = network_find_opponet();
                 if(opponet_info != NULL) {
                     screen_board();

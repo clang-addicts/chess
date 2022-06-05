@@ -102,20 +102,20 @@ void screen_menu()
     fBOX(18, 27, 80, 5, BF_LYELLOW_BLACK, ' ');
     fBOX(20, 28, 80, 5, BF_LCYAN_BLACK, ' ');
     fBOX(118, 27, 80, 5, BF_LYELLOW_BLACK, ' ');
-    fBOX(120, 28, 80, 5, BF_LGRAY_BLACK, ' ');
+    fBOX(120, 28, 80, 5, BF_LWHITE_BLACK, ' ');
     fBOX(18, 34, 80, 5, BF_LYELLOW_BLACK, ' ');
-    fBOX(20, 35, 80, 5, BF_LGRAY_BLACK, ' ');
+    fBOX(20, 35, 80, 5, BF_LWHITE_BLACK, ' ');
     fBOX(118, 34, 80, 5, BF_LYELLOW_BLACK, ' ');
-    fBOX(120, 35, 80, 5, BF_LGRAY_BLACK, ' ');
+    fBOX(120, 35, 80, 5, BF_LWHITE_BLACK, ' ');
     fBOX(68, 41, 80, 5, BF_LYELLOW_BLACK, ' ');
-    fBOX(70, 42, 80, 5, BF_LGRAY_BLACK, ' ');
+    fBOX(70, 42, 80, 5, BF_LWHITE_BLACK, ' ');
 
     // print option description
     printc(57, 30, BF_LCYAN_BLACK, "1 vs 1");
-    printc(156, 30, BF_LGRAY_BLACK, "1 vs CPU");
-    printc(56, 37, BF_LGRAY_BLACK, "Settings");
-    printc(155, 37, BF_LGRAY_BLACK, "Information");
-    printc(108, 44, BF_LGRAY_BLACK, "Quit");
+    printc(156, 30, BF_LWHITE_BLACK, "1 vs CPU");
+    printc(56, 37, BF_LWHITE_BLACK, "Settings");
+    printc(155, 37, BF_LWHITE_BLACK, "Information");
+    printc(108, 44, BF_LWHITE_BLACK, "Quit");
 }
 
 void screen_select_order() {
@@ -126,6 +126,20 @@ void screen_info() {
     printf("printing info/credit screen\n");   
 }
 
+void screen_server_or_client()
+{
+    // option box
+    fBOX(70, 16, 80, 20, BF_LYELLOW_BLACK, ' ');
+    fBOX(72, 17, 80, 20, BF_LWHITE_BLACK, ' ');
+    printc(76, 19, BF_LWHITE_BLACK, "Select Endpoint Mode");
+
+    // input boxes
+    printc(76, 23, BF_LWHITE_BLACK, "IP");
+    fBOX(76, 24, 50, 1, BF_BLACK_WHITE, ' ');
+    printc(76, 26, BF_LWHITE_BLACK, "Port");
+    fBOX(76, 27, 50, 1, BF_BLACK_WHITE, ' ');
+}
+
 void screen_find_opponet()
 {
     // option box
@@ -134,12 +148,10 @@ void screen_find_opponet()
     printc(76, 19, BF_LWHITE_BLACK, "Input your opponet IP:PORT information");
 
     // input boxes
-    printc(76, 24, BF_LWHITE_BLACK, "IP");
-    fBOX(76, 25, 50, 1, BF_BLACK_WHITE, ' ');
-    printc(76, 26, BF_LWHITE_BLACK, "PORT");
+    printc(76, 23, BF_LWHITE_BLACK, "IP");
+    fBOX(76, 24, 50, 1, BF_BLACK_WHITE, ' ');
+    printc(76, 26, BF_LWHITE_BLACK, "Port");
     fBOX(76, 27, 50, 1, BF_BLACK_WHITE, ' ');
-
-    return;
 }
 
 void screen_settings() {
@@ -147,50 +159,61 @@ void screen_settings() {
 }
 
 // Chess Board
-/*static void chessBoard(int x,int y,int color1, int color2){
+static void chessBoard(int x,int y,int color1, int color2){
     setColor(color1);
-    for(i=0;i<96;i++){
-
+    int i,j;
+    for(j=0;j<4;j++){
+        for(i=0;i<4;i++){
+            fBOX(x+i*24, y+j*12, 12, 6, color1,' ');   
+        }
+        for(i=0;i<4;i++){
+            fBOX(x+12+i*24, y+6+j*12 , 12, 6, color1,' ');   
+        }
     }
-}*/
-static void chessBoard(int posX, int posY, int length, int height, int color, char* side)	// length, height = multiple of 8 only
-{
-	setColor(color);
-	gotoXY(posX,posY);
-	int a,b,i,j;	// i = 체스판 x 좌표, j = 체스판 y 좌표 
-	 
-	for(a=0;a<4;a++)
-	{
-		for(i=0;i<posX+length*7/8;i++)
-		{
-			for(j=0;j<height/8;j++)
-			{
-				if(i%(length/4)==0)     //짝수 줄
-				{
-					gotoXY(posX+i,posY+j+a*height/4);
-					for(b=0;b<length/8;b++)
-					{
-						printf("%s",side);
-					}
-                }
-                else if(i%(length/4)==length/8)     //홀수 줄
-				{		
-					gotoXY(posX+i,posY+j+height/8+a*height/4);
-					for(b=0;b<length/8;b++)	
-					{				
-						printf("%s",side);	
-					}
-				}
-			}	
-		}
-	}
+    setColor(color2);
+    for(j=0;j<4;j++){
+        for(i=0;i<4;i++){
+            fBOX(x+12+i*24, y+j*12, 12, 6, color2,' ');   
+        }
+        for(i=0;i<4;i++){
+            fBOX(x+i*24, y+6+j*12 , 12, 6, color2,' ');   
+        }
+    }
 }
 
 
 
-void screen_board() {
+void screen_board(){
     clear();
-    eBOX(0,0,100,50,143,' ');    //(220,50)
-    eBOX(98,0,122,50,143,' ');    //(76,34)
-    chessBoard(2,1,96,48,240," ");      //(5,4,72,32,240," ")
+    eBOX(0,0,100,50,BF_LGRAY_BLACK,' ');    //(220,50)
+    eBOX(98,0,122,50,BF_LGRAY_BLACK,' ');    //(76,34)
+    chessBoard(2,1,BF_LWHITE_BLACK,BF_BLACK_WHITE);
+}
+
+void screen_network_mode()
+{
+    // secondary menu
+    fBOX(44, 8, 130, 30, BF_LYELLOW_BLACK, ' ');
+    fBOX(46, 9, 130, 30, BF_LGRAY_BLACK, ' ');
+
+    // options
+    fBOX(50, 11, 59, 26, BF_LWHITE_BLACK, ' ');
+    fBOX(113, 11, 59, 26, BF_LWHITE_BLACK, ' ');
+    printc(76, 24, BF_LWHITE_BLACK, "Server");
+    printc(140, 24, BF_LWHITE_BLACK, "Client");
+
+    // current option selection
+    eBOX(50, 11, 59, 26, BF_LCYAN_BLACK, ' ');
+}
+
+void screen_waiting_on_opponet()
+{
+    // secondary menu
+    fBOX(44, 8, 130, 30, BF_LYELLOW_BLACK, ' ');
+    fBOX(46, 9, 130, 30, BF_LGRAY_BLACK, ' ');
+    printc(80, 24, BF_LGRAY_BLACK, "Waiting on opponet...");
+
+    // tmp
+    int a;
+    scanf("%s", &a);
 }

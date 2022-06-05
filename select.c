@@ -1,6 +1,6 @@
 #include "select.h"
 
-static int get_input()
+int get_input()
 {
     while(1) {
         if(kbhit()) {
@@ -12,30 +12,31 @@ static int get_input()
 
 static void select_menu_move(int prev, int cur)
 {
+    int color = BF_LWHITE_BLACK;
     switch(prev) {
         case 1: {
-            fBOX(20, 28, 80, 5, BF_LGRAY_BLACK, ' ');
-            printc(57, 30, BF_LGRAY_BLACK, "1 vs 1");
+            fBOX(20, 28, 80, 5, color, ' ');
+            printc(57, 30, color, "1 vs 1");
             break;
         }
         case 2: {
-            fBOX(120, 28, 80, 5, BF_LGRAY_BLACK, ' ');
-            printc(156, 30, BF_LGRAY_BLACK, "1 vs CPU");
+            fBOX(120, 28, 80, 5, color, ' ');
+            printc(156, 30, color, "1 vs CPU");
             break;
         }
         case 3: {
-            fBOX(20, 35, 80, 5, BF_LGRAY_BLACK, ' ');
-            printc(56, 37, BF_LGRAY_BLACK, "Settings");
+            fBOX(20, 35, 80, 5, color, ' ');
+            printc(56, 37, color, "Settings");
             break;
         }
         case 4: {
-            fBOX(120, 35, 80, 5, BF_LGRAY_BLACK, ' ');
-            printc(155, 37, BF_LGRAY_BLACK, "Information");
+            fBOX(120, 35, 80, 5, color, ' ');
+            printc(155, 37, color, "Information");
             break;
         }
         case 5: {
-            fBOX(70, 42, 80, 5, BF_LGRAY_BLACK, ' ');
-            printc(108, 44, BF_LGRAY_BLACK, "Quit");
+            fBOX(70, 42, 80, 5, color, ' ');
+            printc(108, 44, color, "Quit");
             break;
         }
         default: {
@@ -43,30 +44,31 @@ static void select_menu_move(int prev, int cur)
         }
     }
 
+    color = BF_LCYAN_BLACK;
     switch(cur) {
         case 1: {
-            fBOX(20, 28, 80, 5, BF_LCYAN_BLACK, ' ');
-            printc(57, 30, BF_LCYAN_BLACK, "1 vs 1");
+            fBOX(20, 28, 80, 5, color, ' ');
+            printc(57, 30, color, "1 vs 1");
             break;
         }
         case 2: {
-            fBOX(120, 28, 80, 5, BF_LCYAN_BLACK, ' ');
-            printc(156, 30, BF_LCYAN_BLACK, "1 vs CPU");
+            fBOX(120, 28, 80, 5, color, ' ');
+            printc(156, 30, color, "1 vs CPU");
             break;
         }
         case 3: {
-            fBOX(20, 35, 80, 5, BF_LCYAN_BLACK, ' ');
-            printc(56, 37, BF_LCYAN_BLACK, "Settings");
+            fBOX(20, 35, 80, 5, color, ' ');
+            printc(56, 37, color, "Settings");
             break;
         }
         case 4: {
-            fBOX(120, 35, 80, 5, BF_LCYAN_BLACK, ' ');
-            printc(155, 37, BF_LCYAN_BLACK, "Information");
+            fBOX(120, 35, 80, 5, color, ' ');
+            printc(155, 37, color, "Information");
             break;
         }
         case 5: {
-            fBOX(70, 42, 80, 5, BF_LCYAN_BLACK, ' ');
-            printc(108, 44, BF_LCYAN_BLACK, "Quit");
+            fBOX(70, 42, 80, 5, color, ' ');
+            printc(108, 44, color, "Quit");
             break;
         }
         default: {
@@ -94,6 +96,7 @@ int select_info()
 }
 
 /*
+Position Numbering
 1 2
 3 4
 5 5
@@ -187,5 +190,104 @@ int select_menu()
 
 int select_input_ip()
 {
-    get_input();
+    char ip[32] = {0};
+    int port = 0;
+
+    // TODO: need a keyboard reader instead of scanf
+    gotoXY(77, 24); scanf("%s", ip);
+    gotoXY(77, 27); scanf("%d", &port);
+
+    
+}
+
+static void select_network_mode_move(int prev, int cur)
+{
+    int color = BF_LWHITE_BLACK;
+    switch(prev) {
+        case 1: {
+            eBOX(50, 11, 59, 26, color, ' ');
+            break;
+        }
+        case 2: {
+            eBOX(113, 11, 59, 26, color, ' ');
+            break;
+        }
+        default: {
+            return;
+        }
+    }
+
+    color = BF_LCYAN_BLACK;
+    switch(cur) {
+        case 1: {
+            eBOX(50, 11, 59, 26, color, ' ');
+            break;
+        }
+        case 2: {
+            eBOX(113, 11, 59, 26, color, ' ');
+            break;
+        }
+        default: {
+            return;
+        }
+    }
+}
+
+/*
+Position Numbering
+1 2
+*/
+int select_network_mode()
+{
+    char array[1][2] = {{1,2}};
+    int previous = -1;
+    int current = 0;
+    int flag_selected = 0;
+    int x = 0;
+    int y = 0;
+
+    while(1) {
+        switch(get_input()) {
+            case KEY_ARROW_LEFT: { // X--
+                previous = array[y][x];
+
+                if((x-1) < 0) {
+                    x = NMODE_ARRAY_X_SIZE - 1; 
+                } else {
+                    x--;
+                }
+
+                current = array[y][x];
+                select_network_mode_move(previous, current);
+                break;
+            }
+            case KEY_ARROW_RIGHT: { // X++
+                previous = array[y][x];
+
+                if((x+1) >= NMODE_ARRAY_X_SIZE) {
+                    x = 0; 
+                } else {
+                    x++;
+                }
+
+                current = array[y][x];
+                select_network_mode_move(previous, current);
+                break;
+            }
+            case KEY_ESC:
+                current = NMODE_EXIT;
+            case KEY_ENTER: {
+                flag_selected = 1;
+                break;
+            }
+        } 
+
+        if(flag_selected) break;
+    }
+
+    switch(current) {
+        case 1: return NMODE_SERVER;
+        case 2: return NMODE_CLIENT;
+        default: return NMODE_EXIT;
+    }
 }

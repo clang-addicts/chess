@@ -75,10 +75,88 @@ void print_default_black_piece(){
     King(43,3,7);
     Queen(55,3,7);
 }
+
+int chessArr[8][8]={{1,0,1,0,1,0,1,0},  // 0 = BF_BLACK_WHITE, 1 = BF_LWHITE_BLACK
+                    {0,1,0,1,0,1,0,1},
+                    {1,0,1,0,1,0,1,0},
+                    {0,1,0,1,0,1,0,1},
+                    {1,0,1,0,1,0,1,0},
+                    {0,1,0,1,0,1,0,1},
+                    {1,0,1,0,1,0,1,0},
+                    {0,1,0,1,0,1,0,1}
+};
+
+void piece_move(){
+    int currentPosX=2;
+    int currentPosY=1;
+
+    eBOX(currentPosX,currentPosY,12,6,BF_GREEN_BLACK,' ');
+    int ArrX=0;
+    int ArrY=0;
+    chessArr[ArrY][ArrX];
+    while(1){
+        if(kbhit()){
+            int pressKey=getch();
+                switch(pressKey){
+                case 72:    //위
+                    if(ArrY-1<0)
+                        break;
+                    if(chessArr[ArrY][ArrX]==1)
+                        eBOX(currentPosX,currentPosY,12,6,BF_LWHITE_BLACK,' ');
+                    else
+                        eBOX(currentPosX,currentPosY,12,6,BF_BLACK_WHITE,' ');                   
+                    ArrY -=1;
+
+                    currentPosY -= 6;
+                    eBOX(currentPosX,currentPosY,12,6,BF_GREEN_BLACK,' ');                 
+                    break;
+                case 80:    //아래
+                    if(ArrY+1>7)
+                        break;
+                    if(chessArr[ArrY][ArrX]==1)
+                        eBOX(currentPosX,currentPosY,12,6,BF_LWHITE_BLACK,' ');
+                    else
+                        eBOX(currentPosX,currentPosY,12,6,BF_BLACK_WHITE,' ');                     
+                    ArrY +=1;
+
+                    currentPosY += 6;
+                    eBOX(currentPosX,currentPosY,12,6,BF_GREEN_BLACK,' ');               
+                    break;
+                case 75:    //왼쪽
+                    if(ArrX-1<0)
+                        break;
+                    if(chessArr[ArrY][ArrX]==1)
+                        eBOX(currentPosX,currentPosY,12,6,BF_LWHITE_BLACK,' ');
+                    else
+                        eBOX(currentPosX,currentPosY,12,6,BF_BLACK_WHITE,' ');                  
+                    ArrX -=1;
+
+                    currentPosX -= 12;
+                    eBOX(currentPosX,currentPosY,12,6,BF_GREEN_BLACK,' ');                  
+                    break;
+                case 77:    //오른쪽
+                    if(ArrX+1>7)
+                        break;
+                    if(chessArr[ArrY][ArrX]==1)
+                        eBOX(currentPosX,currentPosY,12,6,BF_LWHITE_BLACK,' ');
+                    else
+                        eBOX(currentPosX,currentPosY,12,6,BF_BLACK_WHITE,' ');                    
+                    ArrX +=1;
+
+                    currentPosX += 12;
+                    eBOX(currentPosX,currentPosY,12,6,BF_GREEN_BLACK,' ');                
+                    break;
+                case 13:
+                    eBOX(currentPosX,currentPosY,12,6,BF_RED_BLACK,' ');
+            }
+        }
+    }
+    
+}
+
 void game()
 {
-    while(1){
-        print_default_white_piece();
-        print_default_black_piece();
-    }
+    print_default_white_piece();
+    print_default_black_piece();
+    piece_move();
 }

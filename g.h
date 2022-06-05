@@ -11,6 +11,13 @@ enum {
 };
 
 enum {
+    NMODE_EXIT = 0,
+    NMODE_SERVER,
+    NMODE_CLIENT,
+    NMODE_MAX
+};
+
+enum {
     GAMEMODE_CPU = 0,
     GAMEMODE_PLAYER,
     GAMEMODE_MAX
