@@ -16,6 +16,11 @@ typedef struct Piece {
     int y;
 }Piece;
 
+typedef struct Rule{
+    int kingDead;
+    int timeOver;
+}
+
 void King(int x,int y,int color){
     setColor(color);
     gotoXY(x,y);
@@ -154,9 +159,34 @@ void piece_move(){
     
 }
 
+void black_win(){
+    
+}
+
+void white_win(){
+    
+}
+
+void game_rule(){
+    if(black.kingDead){
+        black_win();
+    }
+    else if(white.kingDead){
+        white_win();
+    }
+
+    if(black.TimeOver){
+        white_win();
+    }
+    else if(white.timeOver){
+        black_win();
+    }
+}
+
 void game()
 {
     print_default_white_piece();
     print_default_black_piece();
     piece_move();
+    game_rule();
 }
