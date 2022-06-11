@@ -19,7 +19,7 @@
 #define BF_LYELLOW_BLACK 224
 #define BF_LCYAN_BLACK 176
 #define BF_LWHITE_BLACK 240
-#define BF_BLACK_WHITE 15
+#define BF_BLACK_WHITE 7
 #define BF_RED_BLACK 64
 
 

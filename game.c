@@ -8,6 +8,32 @@
 #include "screen.h"
 #define TEAM_BLACK 0
 #define TEAM_WHITE 1
+#define TYPE_KING 0
+#define TYPE_QUEEN 1
+#define TYPE_ROOK 2
+#define TYPE_BISHOP 3
+#define TYPE_KNIGHT 4
+#define TYPE_PAWN 5
+
+void print_path(Piece *pi){
+    switch(pi->type)
+    {
+        case TYPE_KING :
+        {
+            //pi->x-1 pi->y-1
+            //pi->x+0 pi->y-1
+            //pi->x+1 pi->y-1
+            //pi->x-1 pi->y+0
+            //pi->x+1 pi->y+0
+            //pi->x-1 pi->y+0
+            //pi->x+0 pi->y+1
+            //pi->x+1 pi->y+1
+            
+            
+            break;
+        }
+    }
+}
 
 typedef struct _piece {
     int type;
@@ -34,63 +60,33 @@ typedef struct _rule{
 
 void King(int x,int y,int color){
     setColor(color);
-    gotoXY(x,y);
+    gotoXY(x+2,y+1);
     printf("K");
 }
 void Queen(int x, int y, int color){
     setColor(color);
-    gotoXY(x,y);
+    gotoXY(x+2,y+1);
     printf("Q");
 }
 void Bishop(int x, int y, int color){
     setColor(color);
-    gotoXY(x,y);
+    gotoXY(x+2,y+1);
     printf("B");
 }
 void Knight(int x, int y, int color){
     setColor(color);
-    gotoXY(x,y);
+    gotoXY(x+2,y+1);
     printf("kn");
 }
 void Rook(int x, int y, int color){
     setColor(color);
-    gotoXY(x,y);
+    gotoXY(x+2,y+1);
     printf("R");
 }
 void Pawn(int x, int y, int color){
     setColor(color);
-    gotoXY(x,y);
+    gotoXY(x+2,y+1);
     printf("P");
-}
-
-
-void default_white(){
-    int i;
-    for(i=0;i<8;i++){
-        Pawn(7+i*12,40,240);
-    }
-    Rook(7, 46,BF_LWHITE_BLACK);
-    Rook(91,46,BF_LWHITE_BLACK);
-    Knight(19,46,BF_LWHITE_BLACK);
-    Knight(79,46,BF_LWHITE_BLACK);
-    Bishop(31,46,BF_LWHITE_BLACK);
-    Bishop(67,46,BF_LWHITE_BLACK);
-    King(43,46,BF_LWHITE_BLACK);
-    Queen(55,46,BF_LWHITE_BLACK);
-}
-void default_black(){
-    int i;
-    for(i=0;i<8;i++){
-        Pawn(7+i*12,9,7);
-    }
-    Rook(7,3,7);
-    Rook(91,3,7);
-    Knight(19,3,7);
-    Knight(79,3,7);
-    Bishop(31,3,7);
-    Bishop(67,3,7);
-    King(43,3,7);
-    Queen(55,3,7);
 }
 
 int chessArr[8][8]={{1,0,1,0,1,0,1,0},  // 0 = BF_BLACK_WHITE, 1 = BF_LWHITE_BLACK
@@ -103,14 +99,28 @@ int chessArr[8][8]={{1,0,1,0,1,0,1,0},  // 0 = BF_BLACK_WHITE, 1 = BF_LWHITE_BLA
                     {0,1,0,1,0,1,0,1}
 };
 
-void piece_move(){
-    int currentPosX=2;
-    int currentPosY=1;
+int calcx(int calcx){
+    int x;
+    if(calcx==0)
+        x=2;
+    else
+        x=2+calcx*12;
+    return x;
+}
+int calcy(int calcy){
+    int y;
+    if(calcy==0)
+        y=1;
+    else
+        y=1+calcy*6;
+    return y;
+}
 
-    eBOX(currentPosX,currentPosY,12,6,BF_GREEN_BLACK,' ');
+void piece_move(){
+
+    eBOX(calcx(0),calcy(0),12,6,BF_GREEN_BLACK,' ');
     int ArrX=0;
     int ArrY=0;
-    chessArr[ArrY][ArrX];
     while(1){
         if(kbhit()){
             int pressKey=getch();
@@ -119,52 +129,49 @@ void piece_move(){
                     if(ArrY-1<0)
                         break;
                     if(chessArr[ArrY][ArrX]==1)
-                        eBOX(currentPosX,currentPosY,12,6,BF_LWHITE_BLACK,' ');
+                        eBOX(calcx(ArrX),calcy(ArrY),12,6,BF_LWHITE_BLACK,' ');
                     else
-                        eBOX(currentPosX,currentPosY,12,6,BF_BLACK_WHITE,' ');                   
+                        eBOX(calcx(ArrX),calcy(ArrY),12,6,BF_BLACK_WHITE,' ');                   
                     ArrY -=1;
 
-                    currentPosY -= 6;
-                    eBOX(currentPosX,currentPosY,12,6,BF_GREEN_BLACK,' ');                 
+                    eBOX(calcx(ArrX),calcy(ArrY),12,6,BF_GREEN_BLACK,' ');                 
                     break;
                 case 80:    //아래
                     if(ArrY+1>7)
                         break;
                     if(chessArr[ArrY][ArrX]==1)
-                        eBOX(currentPosX,currentPosY,12,6,BF_LWHITE_BLACK,' ');
+                        eBOX(calcx(ArrX),calcy(ArrY),12,6,BF_LWHITE_BLACK,' ');
                     else
-                        eBOX(currentPosX,currentPosY,12,6,BF_BLACK_WHITE,' ');                     
+                        eBOX(calcx(ArrX),calcy(ArrY),12,6,BF_BLACK_WHITE,' ');                     
                     ArrY +=1;
 
-                    currentPosY += 6;
-                    eBOX(currentPosX,currentPosY,12,6,BF_GREEN_BLACK,' ');               
+                    eBOX(calcx(ArrX),calcy(ArrY),12,6,BF_GREEN_BLACK,' ');               
                     break;
                 case 75:    //왼쪽
                     if(ArrX-1<0)
                         break;
                     if(chessArr[ArrY][ArrX]==1)
-                        eBOX(currentPosX,currentPosY,12,6,BF_LWHITE_BLACK,' ');
+                        eBOX(calcx(ArrX),calcy(ArrY),12,6,BF_LWHITE_BLACK,' ');
                     else
-                        eBOX(currentPosX,currentPosY,12,6,BF_BLACK_WHITE,' ');                  
+                        eBOX(calcx(ArrX),calcy(ArrY),12,6,BF_BLACK_WHITE,' ');                  
                     ArrX -=1;
 
-                    currentPosX -= 12;
-                    eBOX(currentPosX,currentPosY,12,6,BF_GREEN_BLACK,' ');                  
+                    eBOX(calcx(ArrX),calcy(ArrY),12,6,BF_GREEN_BLACK,' ');                  
                     break;
                 case 77:    //오른쪽
                     if(ArrX+1>7)
                         break;
                     if(chessArr[ArrY][ArrX]==1)
-                        eBOX(currentPosX,currentPosY,12,6,BF_LWHITE_BLACK,' ');
+                        eBOX(calcx(ArrX),calcy(ArrY),12,6,BF_LWHITE_BLACK,' ');
                     else
-                        eBOX(currentPosX,currentPosY,12,6,BF_BLACK_WHITE,' ');                    
+                        eBOX(calcx(ArrX),calcy(ArrY),12,6,BF_BLACK_WHITE,' ');                    
                     ArrX +=1;
 
-                    currentPosX += 12;
-                    eBOX(currentPosX,currentPosY,12,6,BF_GREEN_BLACK,' ');                
+                    eBOX(calcx(ArrX),calcy(ArrY),12,6,BF_GREEN_BLACK,' ');                
                     break;
                 case 13:
-                    eBOX(currentPosX,currentPosY,12,6,BF_RED_BLACK,' ');
+                    eBOX(calcx(ArrX),calcy(ArrY),12,6,BF_RED_BLACK,' ');
+                    break;
             }
         }
     }
@@ -195,45 +202,73 @@ void white_win(){
 //     }
 // }
 
+void print_default(Player *p){
+    King(calcx(p->King.x),calcy(p->King.y),p->color == TEAM_BLACK? BF_BLACK_WHITE : BF_LWHITE_BLACK);
+    Queen(calcx(p->Queen.x),calcy(p->Queen.y),p->color == TEAM_BLACK? BF_BLACK_WHITE : BF_LWHITE_BLACK);
+    Bishop(calcx(p->Bishop[0].x),calcy(p->Bishop[0].y),p->color == TEAM_BLACK? BF_BLACK_WHITE : BF_LWHITE_BLACK);
+    Bishop(calcx(p->Bishop[1].x),calcy(p->Bishop[1].y),p->color == TEAM_BLACK? BF_BLACK_WHITE : BF_LWHITE_BLACK);
+    Rook(calcx(p->Rook[0].x),calcy(p->Rook[0].y),p->color == TEAM_BLACK? BF_BLACK_WHITE : BF_LWHITE_BLACK);
+    Rook(calcx(p->Rook[1].x),calcy(p->Rook[1].y),p->color == TEAM_BLACK? BF_BLACK_WHITE : BF_LWHITE_BLACK);
+    Knight(calcx(p->Knight[0].x),calcy(p->Knight[0].y),p->color == TEAM_BLACK? BF_BLACK_WHITE : BF_LWHITE_BLACK);
+    Knight(calcx(p->Knight[1].x),calcy(p->Knight[1].y),p->color == TEAM_BLACK? BF_BLACK_WHITE : BF_LWHITE_BLACK);
+    Pawn(calcx(p->Pawn[0].x),calcy(p->Pawn[0].y),p->color == TEAM_BLACK? BF_BLACK_WHITE : BF_LWHITE_BLACK);
+    Pawn(calcx(p->Pawn[1].x),calcy(p->Pawn[1].y),p->color == TEAM_BLACK? BF_BLACK_WHITE : BF_LWHITE_BLACK);
+    Pawn(calcx(p->Pawn[2].x),calcy(p->Pawn[2].y),p->color == TEAM_BLACK? BF_BLACK_WHITE : BF_LWHITE_BLACK);
+    Pawn(calcx(p->Pawn[3].x),calcy(p->Pawn[3].y),p->color == TEAM_BLACK? BF_BLACK_WHITE : BF_LWHITE_BLACK);
+    Pawn(calcx(p->Pawn[4].x),calcy(p->Pawn[4].y),p->color == TEAM_BLACK? BF_BLACK_WHITE : BF_LWHITE_BLACK);
+    Pawn(calcx(p->Pawn[5].x),calcy(p->Pawn[5].y),p->color == TEAM_BLACK? BF_BLACK_WHITE : BF_LWHITE_BLACK);
+    Pawn(calcx(p->Pawn[6].x),calcy(p->Pawn[6].y),p->color == TEAM_BLACK? BF_BLACK_WHITE : BF_LWHITE_BLACK);
+    Pawn(calcx(p->Pawn[7].x),calcy(p->Pawn[7].y),p->color == TEAM_BLACK? BF_BLACK_WHITE : BF_LWHITE_BLACK);
+}
+
 void set_default(Player *player){
     if (player->color == TEAM_BLACK){
         int i;
         player->King.x = 4;
         player->King.y = 0;
         player->King.isDead = 0;
+        player->King.type = TYPE_KING;
         
         player->Queen.x = 5;
         player->Queen.y = 0;
         player->Queen.isDead = 0;
+        player->Queen.type = TYPE_QUEEN;
 
         player->Rook[0].x = 0;
         player->Rook[0].y = 0;
         player->Rook[0].isDead = 0;
+        player->Rook[0].type = TYPE_ROOK;
         
         player->Rook[1].x = 7;
         player->Rook[1].y = 0;
         player->Rook[1].isDead = 0;
+        player->Rook[1].type = TYPE_ROOK;
 
         player->Knight[0].x = 1;
         player->Knight[0].y = 0;
         player->Knight[0].isDead = 0;
+        player->Knight[0].type = TYPE_KNIGHT;
 
         player->Knight[1].x = 6;
         player->Knight[1].y = 0;
         player->Knight[1].isDead = 0;  
+        player->Knight[1].type = TYPE_KNIGHT;
         
         player->Bishop[0].x = 3;
         player->Bishop[0].y = 0;
         player->Bishop[0].isDead = 0;
+        player->Bishop[0].type = TYPE_BISHOP;
         
         player->Bishop[1].x = 5;
         player->Bishop[1].y = 0;
         player->Bishop[1].isDead = 0;
+        player->Bishop[1].type = TYPE_BISHOP;
 
         for(i = 0; i <= 7; i++){
             player->Pawn[i].x = i;
             player->Pawn[i].y = 1;
             player->Pawn[i].isDead = 0;
+            player->Pawn[i].type = TYPE_PAWN;
         }      
     }
     else if(player->color == TEAM_WHITE){
@@ -241,39 +276,53 @@ void set_default(Player *player){
         player->King.x = 4;
         player->King.y = 7;
         player->King.isDead = 0;
+        player->King.type = TYPE_KING;
         
         player->Queen.x = 5;
         player->Queen.y = 7;
         player->Queen.isDead = 0;
+        player->Queen.type = TYPE_QUEEN;
 
         player->Rook[0].x = 0;
         player->Rook[0].y = 7;
         player->Rook[0].isDead = 0;
+        player->Rook[0].type = TYPE_ROOK;
         
         player->Rook[1].x = 7;
         player->Rook[1].y = 7;
         player->Rook[1].isDead = 0;
+        player->Rook[1].type = TYPE_ROOK;
 
         player->Knight[0].x = 1;
         player->Knight[0].y = 7;
         player->Knight[0].isDead = 0;
+        player->Knight[0].type = TYPE_KNIGHT;
+
 
         player->Knight[1].x = 6;
         player->Knight[1].y = 7;
         player->Knight[1].isDead = 0;  
+        player->Knight[1].type = TYPE_KNIGHT;
+
         
         player->Bishop[0].x = 3;
         player->Bishop[0].y = 7;
         player->Bishop[0].isDead = 0;
+        player->Bishop[0].type = TYPE_BISHOP;
+
         
         player->Bishop[1].x = 5;
         player->Bishop[1].y = 7;
         player->Bishop[1].isDead = 0;
+        player->Bishop[1].type = TYPE_BISHOP;
+
 
         for(i = 0; i <= 7; i++){
             player->Pawn[i].x = i;
             player->Pawn[i].y = 6;
             player->Pawn[i].isDead = 0;
+            player->Pawn[i].type = TYPE_PAWN;
+
         }      
     }
 }
@@ -284,12 +333,10 @@ void game()
     Player white;
     black.color = TEAM_BLACK;
     white.color = TEAM_WHITE;
-    // set_default(&black);
-    // set_default(&white);
-    // print_default(&black);
-    // print_default(&white);
-    default_black();
-    default_white();
+    set_default(&black);
+    set_default(&white);
+    print_default(&black);
+    print_default(&white);
     piece_move();
     // game_rule();
 }
