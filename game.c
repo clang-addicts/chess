@@ -19,7 +19,7 @@ typedef struct Piece {
 typedef struct Rule{
     int kingDead;
     int timeOver;
-}
+}Rule;
 
 void King(int x,int y,int color){
     setColor(color);
@@ -167,26 +167,26 @@ void white_win(){
     
 }
 
-void game_rule(){
-    if(black.kingDead){
-        black_win();
-    }
-    else if(white.kingDead){
-        white_win();
-    }
+// void game_rule(){
+//     if(black.kingDead){
+//         black_win();
+//     }
+//     else if(white.kingDead){
+//         white_win();
+//     }
 
-    if(black.TimeOver){
-        white_win();
-    }
-    else if(white.timeOver){
-        black_win();
-    }
-}
+//     if(black.TimeOver){
+//         white_win();
+//     }
+//     else if(white.timeOver){
+//         black_win();
+//     }
+// }
 
 void game()
 {
     print_default_white_piece();
     print_default_black_piece();
     piece_move();
-    game_rule();
+    // game_rule();
 }
