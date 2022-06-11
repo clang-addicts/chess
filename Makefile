@@ -1,4 +1,5 @@
 BINARY_NAME=chess
+FLAGS=-lws2_32
 FILES=	main.c\
 		log.c\
 		screen.c\
@@ -7,7 +8,7 @@ FILES=	main.c\
 		game.c
 
 all:
-	gcc -o $(BINARY_NAME) $(FILES)
+	gcc -o $(BINARY_NAME) $(FILES) $(FLAGS)
 
 clean:
 	del /f $(BINARY_NAME).exe

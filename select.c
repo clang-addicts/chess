@@ -246,6 +246,7 @@ int select_network_mode()
     int x = 0;
     int y = 0;
 
+    current = array[y][x];
     while(1) {
         switch(get_input()) {
             case KEY_ARROW_LEFT: { // X--

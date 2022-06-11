@@ -1,14 +1,14 @@
 #include "network.h"
 
+char buffer[4096] = "Hello, World!";
+#define PORT 9000
+
 void* network_find_opponet() {
     printf("find net opponet!\n");   
     return NULL;
 }
-/*
-char buffer[4096] = "Hello, World!";
-#define PORT 9000
 
-
+#if 0
 void wait_for_opponet()
 {
 	int c_socket, s_socket;
@@ -53,4 +53,57 @@ void wait_for_opponet()
 	}
 	close(s_socket);
 }
-*/
+#else
+void wait_for_opponet()
+{
+	SOCKET server_socket = INVALID_SOCKET;
+	SOCKET client_socket = INVALID_SOCKET;
+	struct sockaddr_in service;
+	WSADATA wsaData;
+
+	// https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-wsastartup
+	int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+	if (iResult != NO_ERROR) {
+        wprintf(L"Error at WSAStartup()\n");
+        return;
+    }
+
+	// https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-socket
+	server_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+	if (server_socket == INVALID_SOCKET) {
+		log(LOG_ERR, "socket() failed %d", WSAGetLastError());
+		WSACleanup();
+		return;
+	}
+
+	service.sin_family = AF_INET;
+	service.sin_addr.s_addr = inet_addr("127.0.0.1");
+	service.sin_port = htons(PORT);
+
+	// https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-bind
+	if(bind(server_socket, (SOCKADDR*) &service, sizeof(service)) == SOCKET_ERROR) {
+		log(LOG_ERR, "bind() failed %d", WSAGetLastError());
+		goto err;
+	}
+
+	// https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-listen
+	if(listen(server_socket, SOMAXCONN) == SOCKET_ERROR) {
+		log(LOG_ERR, "listen() failed %d", WSAGetLastError());
+		goto err;	
+	}
+
+	client_socket = accept(server_socket, NULL, NULL);
+	if(client_socket == INVALID_SOCKET) {
+		log(LOG_ERR, "accept() failed %d", WSAGetLastError());
+		goto err;	
+	}
+
+err:
+	if(closesocket(server_socket)==SOCKET_ERROR) {
+		log(LOG_ERR, "closesocket() failed %d", WSAGetLastError());
+		return;
+	}
+	WSACleanup();
+}
+#endif // 0

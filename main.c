@@ -1,13 +1,13 @@
+#include "g.h"
+#include "log.h"
+#include "network.h"
+#include "screen.h"
+#include "select.h"
+#include "game.h"
+
 #include <stdio.h>
 #include <stdbool.h> 
 #include <windows.h>
-
-#include "g.h"
-#include "log.h"
-#include "screen.h"
-#include "select.h"
-#include "network.h"
-#include "game.h"
 
 static const char* get_menu_selection_string(int menu_selection)
 {
@@ -45,9 +45,11 @@ int main(int argc, char **argv)
 
                 screen_network_mode();
                 mode = select_network_mode();
+                log(LOG_NOTICE, "set program mode to %d", mode); 
 
                 switch(mode) {
                     case NMODE_SERVER: {
+                        wait_for_opponet();
                         screen_waiting_on_opponet();
                         break;
                     }

@@ -36,10 +36,10 @@
 #endif
 
 void log_general(int priority, char *str, ...);
-#define log(pri, str, ...) log_general(pri, str, #__VA_ARGS__)
+#define log(pri, str, ...) log_general(pri, str, ##__VA_ARGS__)
 
 void log_debug(int priority, const char *function, int line, char *str, ...);
-#define logd(pri, str, ...) log_debug(pri, __func__, __LINE__, str, #__VA_ARGS__)
+#define logd(pri, str, ...) log_debug(pri, __func__, __LINE__, str, ##__VA_ARGS__)
 
 void init_log();
 
