@@ -6,6 +6,10 @@
 
 #include "log.h"
 #include "screen.h"
+
+//////////////////////////////////////////////////
+// definition
+//////////////////////////////////////////////////
 #define TEAM_BLACK 0
 #define TEAM_WHITE 1
 #define TYPE_KING 0
@@ -14,26 +18,6 @@
 #define TYPE_BISHOP 3
 #define TYPE_KNIGHT 4
 #define TYPE_PAWN 5
-
-void print_path(Piece *pi){
-    switch(pi->type)
-    {
-        case TYPE_KING :
-        {
-            //pi->x-1 pi->y-1
-            //pi->x+0 pi->y-1
-            //pi->x+1 pi->y-1
-            //pi->x-1 pi->y+0
-            //pi->x+1 pi->y+0
-            //pi->x-1 pi->y+0
-            //pi->x+0 pi->y+1
-            //pi->x+1 pi->y+1
-            
-            
-            break;
-        }
-    }
-}
 
 typedef struct _piece {
     int type;
@@ -57,6 +41,28 @@ typedef struct _rule{
     int timeOver;
 }Rule;
 
+//////////////////////////////////////////////////
+// definition
+//////////////////////////////////////////////////
+void print_path(Piece *pi){
+    switch(pi->type)
+    {
+        case TYPE_KING :
+        {
+            //pi->x-1 pi->y-1
+            //pi->x+0 pi->y-1
+            //pi->x+1 pi->y-1
+            //pi->x-1 pi->y+0
+            //pi->x+1 pi->y+0
+            //pi->x-1 pi->y+0
+            //pi->x+0 pi->y+1
+            //pi->x+1 pi->y+1
+            
+            
+            break;
+        }
+    }
+}
 
 void King(int x,int y,int color){
     setColor(color);
