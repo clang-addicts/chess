@@ -70,7 +70,6 @@ void wait_for_opponet()
 
 	// https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-socket
 	server_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-
 	if (server_socket == INVALID_SOCKET) {
 		log(LOG_ERR, "socket() failed %d", WSAGetLastError());
 		WSACleanup();
@@ -106,4 +105,35 @@ err:
 	}
 	WSACleanup();
 }
+
+/*
+void find_opponet()
+{
+	SOCKET client_socket = INVALID_SOCKET;
+	struct sockaddr_in service;
+	WSADATA wsaData;
+
+	// https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-wsastartup
+	int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+	if (iResult != NO_ERROR) {
+        wprintf(L"Error at WSAStartup()\n");
+        return;
+    }
+
+	// https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-socket
+	client_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (client_socket == INVALID_SOCKET) {
+		log(LOG_ERR, "socket() failed %d", WSAGetLastError());
+		WSACleanup();
+		return;
+	}
+
+	service.sin_family = AF_INET;
+	service.sin_addr.s_addr = inet_addr("127.0.0.1");
+	service.sin_port = htons(PORT);
+
+	// https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-connect	
+
+}
+*/
 #endif // 0
