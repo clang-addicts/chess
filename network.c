@@ -70,7 +70,6 @@ void wait_for_opponet()
 
 	// https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-socket
 	server_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-
 	if (server_socket == INVALID_SOCKET) {
 		log(LOG_ERR, "socket() failed %d", WSAGetLastError());
 		WSACleanup();
@@ -102,6 +101,22 @@ void wait_for_opponet()
 		goto err;	
 	}
 
+    // Receive until the peer closes the connection
+	// https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-send
+	int res;
+	char recvbuf[512]= {0};
+    do {
+        res = recv(client_socket, recvbuf, (int)strlen(recvbuf), 0);
+        if ( res> 0 ) {
+			log(LOG_ERR, "Bytes received: %d, msg:%s", res, recvbuf);
+		}else if (res == 0) {
+			log(LOG_ERR, "Connection closed" );
+		}else{
+			log(LOG_ERR, "recv failed with error: %d", WSAGetLastError());
+		}
+
+	} while( res > 0 );	
+
 err:
 	log(LOG_DEBUG, "closing...");
 	if(closesocket(server_socket)==SOCKET_ERROR) {
@@ -111,7 +126,7 @@ err:
 	WSACleanup();
 }
 
-void join_as_opponet()
+void find_opponet()
 {
 	SOCKET client_socket = INVALID_SOCKET;
 	struct sockaddr_in service;
@@ -126,7 +141,6 @@ void join_as_opponet()
 
 	// https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-socket
 	client_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-
 	if (client_socket == INVALID_SOCKET) {
 		log(LOG_ERR, "socket() failed %d", WSAGetLastError());
 		WSACleanup();
@@ -137,34 +151,28 @@ void join_as_opponet()
 	service.sin_addr.s_addr = inet_addr("127.0.0.1");
 	service.sin_port = htons(PORT);
 
-	// https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-bind
-	if(bind(server_socket, (SOCKADDR*) &service, sizeof(service)) == SOCKET_ERROR) {
-		log(LOG_ERR, "bind() failed %d", WSAGetLastError());
-		goto err;
+	// https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-connect	
+    if (connect(client_socket, (SOCKADDR*)&service, sizeof(service)) == SOCKET_ERROR) {
+		log(LOG_ERR, "connect() failed %d", WSAGetLastError());
+		goto err_client;
 	}
 
-	// https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-listen
-	log(LOG_DEBUG, "listening...");
-	if(listen(server_socket, SOMAXCONN) == SOCKET_ERROR) {
-		log(LOG_ERR, "listen() failed %d", WSAGetLastError());
-		goto err;	
-	}
+	char lol[512] = "hiiamserverfiuiquifhqeihfiuqhuihi1h2uieh1i2he1iu";
+    if(send(client_socket, lol, (int)strlen(lol), 0 ) == SOCKET_ERROR) {
+		log(LOG_ERR, "send() failed %d", WSAGetLastError());
+		goto err_client;
+    }
 
-	// https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-accept
-	log(LOG_DEBUG, "accepting...");
-	client_socket = accept(server_socket, NULL, NULL);
-	if(client_socket == INVALID_SOCKET) {
-		log(LOG_ERR, "accept() failed %d", WSAGetLastError());
-		goto err;	
-	}
+    if(shutdown(client_socket, SD_SEND) == SOCKET_ERROR) {
+		log(LOG_ERR, "shutdown() failed %d", WSAGetLastError());
+		goto err_client;
+    }	
 
-err:
-	log(LOG_DEBUG, "closing...");
-	if(closesocket(server_socket)==SOCKET_ERROR) {
+err_client:
+	if(closesocket(client_socket)==SOCKET_ERROR) {
 		log(LOG_ERR, "closesocket() failed %d", WSAGetLastError());
 		return;
 	}
 	WSACleanup();
 }
-
 #endif // 0
