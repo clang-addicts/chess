@@ -56,6 +56,7 @@ int main(int argc, char **argv)
                     case NMODE_CLIENT: {
                         screen_find_opponet();
                         select_input_ip();
+                        find_opponet();
                         break;
                     }
                     default: {

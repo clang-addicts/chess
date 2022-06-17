@@ -10,5 +10,6 @@
 
 void wait_for_opponet(void);
 void* network_find_opponet(void);
+void find_opponet(void);
 
 #endif // __NETWORK_H__

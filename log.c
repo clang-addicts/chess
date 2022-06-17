@@ -22,7 +22,8 @@ static void write_to_file(char *str, size_t slen)
     time_t mt           = time(NULL);
     struct tm mtms      = *localtime(&mt);
 
-    snprintf(file_name, sizeof(file_name), PATH_LOG_DIR"\\%04d%02d%02d.log", mtms.tm_year+1900, mtms.tm_mon+1, mtms.tm_mday);
+    snprintf(file_name, sizeof(file_name), PATH_LOG_DIR"\\%04d%02d%02d.log", 
+    mtms.tm_year+1900, mtms.tm_mon+1, mtms.tm_mday);
 
     fptr = fopen(file_name, "a");
     if(!fptr) return;
@@ -39,8 +40,15 @@ void log_general(int priority, char *fmt, ...)
     const char *pri_str = get_string_priority(priority);
     char str[512]       = {0,};
     int pos             = 0;
+    FILE *fptr          = NULL;
+    char file_name[32]  = {0};
+    time_t mt           = time(NULL);
+    struct tm mtms      = *localtime(&mt);
     
-    pos = snprintf(str, sizeof(str), "[%s] ", get_string_priority(priority));
+    pos = snprintf(str, sizeof(str), "[%04d/%02d/%02d %02d:%02d:%02d][%s] ", 
+        mtms.tm_year+1900, mtms.tm_mon+1, mtms.tm_mday,
+        mtms.tm_hour, mtms.tm_min, mtms.tm_sec,
+        get_string_priority(priority));
 
     va_start(vlist, fmt);
     pos += vsnprintf(str+pos, sizeof(str)-pos, fmt, vlist);

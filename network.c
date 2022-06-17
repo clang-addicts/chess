@@ -61,10 +61,12 @@ void wait_for_opponet()
 	struct sockaddr_in service;
 	WSADATA wsaData;
 
+	log(LOG_DEBUG, "wait opponet starting");
+
 	// https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-wsastartup
 	int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
 	if (iResult != NO_ERROR) {
-        wprintf(L"Error at WSAStartup()\n");
+		log(LOG_ERR, "WSAStartup() failed");
         return;
     }
 
@@ -106,7 +108,8 @@ void wait_for_opponet()
 	int res;
 	char recvbuf[512]= {0};
     do {
-        res = recv(client_socket, recvbuf, (int)strlen(recvbuf), 0);
+		log(LOG_DEBUG, "recving...");
+		res = recv(client_socket, recvbuf, (int)strlen(recvbuf), 0);
         if ( res> 0 ) {
 			log(LOG_ERR, "Bytes received: %d, msg:%s", res, recvbuf);
 		}else if (res == 0) {
@@ -132,10 +135,12 @@ void find_opponet()
 	struct sockaddr_in service;
 	WSADATA wsaData;
 
+	log(LOG_DEBUG, "find_opponet starting");
+
 	// https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-wsastartup
 	int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
 	if (iResult != NO_ERROR) {
-        wprintf(L"Error at WSAStartup()\n");
+		log(LOG_ERR, "WSAStartup() failed");
         return;
     }
 
@@ -151,25 +156,30 @@ void find_opponet()
 	service.sin_addr.s_addr = inet_addr("127.0.0.1");
 	service.sin_port = htons(PORT);
 
-	// https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-connect	
-    if (connect(client_socket, (SOCKADDR*)&service, sizeof(service)) == SOCKET_ERROR) {
+	// https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-connect
+	log(LOG_DEBUG, "connecting...");
+	if (connect(client_socket, (SOCKADDR*)&service, sizeof(service)) == SOCKET_ERROR) {
 		log(LOG_ERR, "connect() failed %d", WSAGetLastError());
 		goto err_client;
 	}
 
 	char lol[512] = "hiiamserverfiuiquifhqeihfiuqhuihi1h2uieh1i2he1iu";
-    if(send(client_socket, lol, (int)strlen(lol), 0 ) == SOCKET_ERROR) {
+	int sent;
+	log(LOG_DEBUG, "sending...");
+    if((sent=send(client_socket, lol, (int)strlen(lol), 0)) == SOCKET_ERROR) {
 		log(LOG_ERR, "send() failed %d", WSAGetLastError());
 		goto err_client;
     }
+	log(LOG_DEBUG, "sent %d", sent);
 
+	log(LOG_DEBUG, "shutdown...");
     if(shutdown(client_socket, SD_SEND) == SOCKET_ERROR) {
 		log(LOG_ERR, "shutdown() failed %d", WSAGetLastError());
 		goto err_client;
     }	
 
 err_client:
-	if(closesocket(client_socket)==SOCKET_ERROR) {
+	if(closesocket(client_socket) == SOCKET_ERROR) {
 		log(LOG_ERR, "closesocket() failed %d", WSAGetLastError());
 		return;
 	}
