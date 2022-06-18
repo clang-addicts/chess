@@ -512,7 +512,7 @@ void set_default(Player *player){
         player->Knight[0].y = 0;
         player->Knight[0].type = TYPE_KNIGHT;
         player->Knight[0].team = TEAM_BLACK;
-        board[player->Knight[0].y][player->Knight[0].x] = &(player->Rook[1]);
+        board[player->Knight[0].y][player->Knight[0].x] = &(player->Knight[0]);
 
         player->Knight[1].x = 6;
         player->Knight[1].y = 0;
@@ -568,7 +568,7 @@ void set_default(Player *player){
         player->Knight[0].y = 7;
         player->Knight[0].type = TYPE_KNIGHT;
         player->Knight[0].team = TEAM_WHITE;
-        board[player->Knight[0].y][player->Knight[0].x] = &(player->Rook[1]);
+        board[player->Knight[0].y][player->Knight[0].x] = &(player->Knight[0]);
 
         player->Knight[1].x = 6;
         player->Knight[1].y = 7;
