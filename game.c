@@ -10,14 +10,17 @@
 //////////////////////////////////////////////////
 // definition
 //////////////////////////////////////////////////
-#define TEAM_BLACK 0
-#define TEAM_WHITE 1
+#define TEAM_NONE 0
+#define TEAM_BLACK 1
+#define TEAM_WHITE 2
 #define TYPE_KING 0
 #define TYPE_QUEEN 1
 #define TYPE_ROOK 2
 #define TYPE_BISHOP 3
 #define TYPE_KNIGHT 4
 #define TYPE_PAWN 5
+#define MAX_BOARD_X 8
+#define MAX_BOARD_Y 8
 
 typedef struct _piece {
     int type;
@@ -41,14 +44,37 @@ typedef struct _rule{
     int timeOver;
 }Rule;
 
+char board[MAX_BOARD_Y][MAX_BOARD_X]={0};
+
 //////////////////////////////////////////////////
 // definition
 //////////////////////////////////////////////////
-void print_path(Piece *pi){
+void print_path(Piece *pi,int team){
+    int i,j;
+    int cnt=0;
     switch(pi->type)
     {
         case TYPE_KING :
         {
+            for(i=-1;i<=1;i++){
+                for(j=-1;j<=1;j++){
+                    if(i==0&&j==0){
+                        continue;
+                    }
+                    if(pi->x+j<0&&pi->x+j>=MAX_BOARD_X){
+                        continue;
+                    }
+                     if(pi->y+i<0&&pi->y+i>=MAX_BOARD_Y){
+                        continue;
+                    }
+                    if(board[pi->y+i][pi->x+j]==team){
+                        continue;
+                    }
+    
+                    cnt++;
+                
+                }
+            }
             //pi->x-1 pi->y-1
             //pi->x+0 pi->y-1
             //pi->x+1 pi->y-1
@@ -61,6 +87,12 @@ void print_path(Piece *pi){
             
             break;
         }
+    }
+    if(cnt>0){
+        return 1;
+    }
+    else{
+        return 0;
     }
 }
 
@@ -177,6 +209,9 @@ void piece_move(){
                     break;
                 case 13:
                     eBOX(calcx(ArrX),calcy(ArrY),12,6,BF_RED_BLACK,' ');
+                    if(board[ArrY][ArrX]==TEAM_BLACK){
+                        print_path()
+                    }
                     break;
             }
         }
@@ -234,47 +269,59 @@ void set_default(Player *player){
         player->King.y = 0;
         player->King.isDead = 0;
         player->King.type = TYPE_KING;
+        board[player->King.y][player->King.x] = TEAM_BLACK;
         
         player->Queen.x = 5;
         player->Queen.y = 0;
         player->Queen.isDead = 0;
         player->Queen.type = TYPE_QUEEN;
+        board[player->Queen.y][player->Queen.x] = TEAM_BLACK;
 
         player->Rook[0].x = 0;
         player->Rook[0].y = 0;
         player->Rook[0].isDead = 0;
         player->Rook[0].type = TYPE_ROOK;
+        board[player->Rook[0].y][player->Rook[0].x] = TEAM_BLACK;
         
         player->Rook[1].x = 7;
         player->Rook[1].y = 0;
         player->Rook[1].isDead = 0;
         player->Rook[1].type = TYPE_ROOK;
+        board[player->Rook[1].y][player->Rook[1].x] = TEAM_BLACK;
 
         player->Knight[0].x = 1;
         player->Knight[0].y = 0;
         player->Knight[0].isDead = 0;
         player->Knight[0].type = TYPE_KNIGHT;
+        board[player->Knight[0].y][player->Knight[0].x] = TEAM_BLACK;
 
         player->Knight[1].x = 6;
         player->Knight[1].y = 0;
         player->Knight[1].isDead = 0;  
         player->Knight[1].type = TYPE_KNIGHT;
+        board[player->Knight[1].y][player->Knight[1].x] = TEAM_BLACK;
         
+
         player->Bishop[0].x = 3;
         player->Bishop[0].y = 0;
         player->Bishop[0].isDead = 0;
         player->Bishop[0].type = TYPE_BISHOP;
+        board[player->Bishop[0].y][player->Bishop[0].x] = TEAM_BLACK;
+
         
         player->Bishop[1].x = 5;
         player->Bishop[1].y = 0;
         player->Bishop[1].isDead = 0;
         player->Bishop[1].type = TYPE_BISHOP;
+        board[player->Bishop[1].y][player->Bishop[1].x] = TEAM_BLACK;
+
 
         for(i = 0; i <= 7; i++){
             player->Pawn[i].x = i;
             player->Pawn[i].y = 1;
             player->Pawn[i].isDead = 0;
             player->Pawn[i].type = TYPE_PAWN;
+            board[player->Pawn[i].y][player->Pawn[i].x] = TEAM_BLACK;
         }      
     }
     else if(player->color == TEAM_WHITE){
@@ -283,44 +330,60 @@ void set_default(Player *player){
         player->King.y = 7;
         player->King.isDead = 0;
         player->King.type = TYPE_KING;
+        board[player->King.y][player->King.x] = TEAM_WHITE;
+
         
         player->Queen.x = 5;
         player->Queen.y = 7;
         player->Queen.isDead = 0;
         player->Queen.type = TYPE_QUEEN;
+        board[player->Queen.y][player->Queen.x] = TEAM_WHITE;
+
 
         player->Rook[0].x = 0;
         player->Rook[0].y = 7;
         player->Rook[0].isDead = 0;
         player->Rook[0].type = TYPE_ROOK;
+        board[player->Rook[0].y][player->Rook[0].x] = TEAM_WHITE;
+
         
         player->Rook[1].x = 7;
         player->Rook[1].y = 7;
         player->Rook[1].isDead = 0;
         player->Rook[1].type = TYPE_ROOK;
+        board[player->Rook[1].y][player->Rook[1].x] = TEAM_WHITE;
+
 
         player->Knight[0].x = 1;
         player->Knight[0].y = 7;
         player->Knight[0].isDead = 0;
         player->Knight[0].type = TYPE_KNIGHT;
+        board[player->Knight[0].y][player->Knight[0].x] = TEAM_WHITE;
+
 
 
         player->Knight[1].x = 6;
         player->Knight[1].y = 7;
         player->Knight[1].isDead = 0;  
         player->Knight[1].type = TYPE_KNIGHT;
+        board[player->Knight[1].y][player->Knight[1].x] = TEAM_WHITE;
+
 
         
         player->Bishop[0].x = 3;
         player->Bishop[0].y = 7;
         player->Bishop[0].isDead = 0;
         player->Bishop[0].type = TYPE_BISHOP;
+        board[player->Bishop[0].y][player->Bishop[0].x] = TEAM_WHITE;
+
 
         
         player->Bishop[1].x = 5;
         player->Bishop[1].y = 7;
         player->Bishop[1].isDead = 0;
         player->Bishop[1].type = TYPE_BISHOP;
+        board[player->Bishop[1].y][player->Bishop[1].x] = TEAM_WHITE;
+
 
 
         for(i = 0; i <= 7; i++){
@@ -328,6 +391,8 @@ void set_default(Player *player){
             player->Pawn[i].y = 6;
             player->Pawn[i].isDead = 0;
             player->Pawn[i].type = TYPE_PAWN;
+            board[player->Pawn[i].y][player->Pawn[i].x] = TEAM_WHITE;
+
 
         }      
     }
@@ -344,5 +409,6 @@ void game()
     print_default(&black);
     print_default(&white);
     piece_move();
+
     // game_rule();
 }
