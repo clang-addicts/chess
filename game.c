@@ -22,6 +22,8 @@
 #define MAX_BOARD_X 8
 #define MAX_BOARD_Y 8
 
+int curTeam = TEAM_BLACK;
+
 typedef struct _piece {
     int type;
     int isDead;
@@ -110,6 +112,9 @@ int print_path(Piece *pi, int team, int color){
         }
         case TYPE_PAWN: {
             if(team == TEAM_BLACK) {
+                if(pi->y+1 >= MAX_BOARD_Y){
+                    break;
+                }
                 // check front space 
                 if (board[pi->y+1][pi->x] == NULL) {
                     movable_space(pi->x, pi->y+1, color);
@@ -135,17 +140,168 @@ int print_path(Piece *pi, int team, int color){
                 }
 
                 // check diagonal (left)
-                if (pi->y+1 < 0 && pi->x+(-1) && board[pi->y+1][pi->x+(-1)] != NULL) {
-                    if (!board[pi->y+1][pi->x+(-1)]->isDead && board[pi->y+1][pi->x+(-1)]->team != team) {
-                        movable_space(pi->x+(-1), pi->y+1, color);
+                if(pi->y+1 < MAX_BOARD_Y && pi->x+(-1) >= 0){
+                    if (board[pi->y+1][pi->x+(-1)] != NULL) {
+                        if (!board[pi->y+1][pi->x+(-1)]->isDead && board[pi->y+1][pi->x+(-1)]->team != team) {
+                            movable_space(pi->x+(-1), pi->y+1, color);
+                            cnt++;
+                        }
+                    }
+                }
+                
+                // check diagonal (right)
+                if(pi->y+1 < MAX_BOARD_Y && pi->x+(+1) < MAX_BOARD_X){    
+                    if(board[pi->y+1][pi->x+(+1)] != NULL) {
+                        if (!board[pi->y+1][pi->x+(+1)]->isDead && board[pi->y+1][pi->x+(+1)]->team != team) {
+                            movable_space(pi->x+(+1), pi->y+1, color);
+                            cnt++;
+                        }
+                    }
+                }
+            }
+
+            else if(team == TEAM_WHITE) {
+                if(pi->y-1 <0){
+                    break;
+                }
+                // check front space 
+                if (board[pi->y-1][pi->x] == NULL) {
+                    movable_space(pi->x, pi->y-1, color);
+                    cnt++;
+                } else {
+                    if (board[pi->y-1][pi->x]->isDead) {
+                        movable_space(pi->x, pi->y-1, color);
                         cnt++;
                     }
                 }
 
+                // check 2 front space
+                if(!pi->moved) {
+                    if (board[pi->y-2][pi->x] == NULL) {
+                        movable_space(pi->x, pi->y-2, color);
+                        cnt++;
+                    } else {
+                        if (board[pi->y-2][pi->x]->isDead) {
+                            movable_space(pi->x, pi->y-2, color);
+                            cnt++;
+                        }
+                    }
+                }
+
+                // check diagonal (left)
+                if(pi->y-1 >= 0 && pi->x+(-1) >= 0){
+                    if (board[pi->y-1][pi->x+(-1)] != NULL) {
+                        if (!board[pi->y-1][pi->x+(-1)]->isDead && board[pi->y-1][pi->x+(-1)]->team != team) {
+                            movable_space(pi->x+(-1), pi->y-1, color);
+                            cnt++;
+                        }
+                    }
+                }
+                
                 // check diagonal (right)
-                if (pi->y+1 < 0 && pi->x+(+1) && board[pi->y+1][pi->x+(+1)] != NULL) {
-                    if (!board[pi->y+1][pi->x+(+1)]->isDead && board[pi->y+1][pi->x+(+1)]->team != team) {
-                        movable_space(pi->x+(+1), pi->y+1, color);
+                if(pi->y-1 >= 0 && pi->x+(+1) < MAX_BOARD_X){    
+                    if(board[pi->y-1][pi->x+(+1)] != NULL) {
+                        if (!board[pi->y-1][pi->x+(+1)]->isDead && board[pi->y-1][pi->x+(+1)]->team != team) {
+                            movable_space(pi->x+(+1), pi->y-1, color);
+                            cnt++;
+                        }
+                    }
+                }
+            }
+            break;
+        }
+        case TYPE_KNIGHT:{
+            //check down
+            if(pi->y+2 < MAX_BOARD_Y){
+                if(pi->x-1 > -1){
+                    if(board[pi->y+2][pi->x-1] == NULL){
+                        movable_space(pi->x-1, pi->y+2, color);
+                        cnt++;
+                    }
+                    else if(board[pi->y+2][pi->x-1]->isDead){
+                        movable_space(pi->x-1, pi->y+2, color);
+                        cnt++;
+                    }
+                }
+                if(pi->x+1 < MAX_BOARD_X){
+                    if(board[pi->y+2][pi->x+1] == NULL){
+                        movable_space(pi->x+1, pi->y+2, color);
+                        cnt++;
+                    }
+                    else if(board[pi->y+2][pi->x+1]->isDead){
+                        movable_space(pi->x+1, pi->y+2, color);
+                        cnt++;
+                    }
+                }
+            }
+
+            //check up
+            if(pi->y-2 > -1){
+                if(pi->x-1 > -1){
+                    if(board[pi->y-2][pi->x-1] == NULL){
+                        movable_space(pi->x-1, pi->y-2, color);
+                        cnt++;
+                    }
+                    else if(board[pi->y-2][pi->x-1]->isDead){
+                        movable_space(pi->x-1, pi->y-2, color);
+                        cnt++;
+                    }
+                }
+                if(pi->x+1 < MAX_BOARD_X){
+                    if(board[pi->y-2][pi->x+1] == NULL){
+                        movable_space(pi->x+1, pi->y-2, color);
+                        cnt++;
+                    }
+                    else if(board[pi->y-2][pi->x+1]->isDead){
+                        movable_space(pi->x+1, pi->y-2, color);
+                        cnt++;
+                    }
+                }
+            }
+
+            //check right
+            if(pi->x+2 < MAX_BOARD_X){
+                if(pi->y-1 > -1){
+                    if(board[pi->y-1][pi->x+2] == NULL){
+                        movable_space(pi->x+2, pi->y-1, color);
+                        cnt++;
+                    }
+                    else if(board[pi->y-1][pi->x+2]->isDead){
+                        movable_space(pi->x+2, pi->y-1, color);
+                        cnt++;
+                    }
+                }
+                if(pi->y+1 < MAX_BOARD_Y){
+                    if(board[pi->y+1][pi->x+2] == NULL){
+                        movable_space(pi->x+2, pi->y+1, color);
+                        cnt++;
+                    }
+                    else if(board[pi->y+1][pi->x+2]->isDead){
+                        movable_space(pi->x+2, pi->y+1, color);
+                        cnt++;
+                    }
+                }
+            }
+
+            //check left
+            if(pi->x-2 > -1){
+                if(pi->y-1 > -1){
+                    if(board[pi->y-1][pi->x-2] == NULL){
+                        movable_space(pi->x-2, pi->y-1, color);
+                        cnt++;
+                    }
+                    else if(board[pi->y-1][pi->x-2]->isDead){
+                        movable_space(pi->x-2, pi->y-1, color);
+                        cnt++;
+                    }
+                }
+                if(pi->y+1 < MAX_BOARD_Y){
+                    if(board[pi->y+1][pi->x-2] == NULL){
+                        movable_space(pi->x-2, pi->y+1, color);
+                        cnt++;
+                    }
+                    else if(board[pi->y+1][pi->x-2]->isDead){
+                        movable_space(pi->x-2, pi->y+1, color);
                         cnt++;
                     }
                 }
@@ -207,6 +363,7 @@ void piece_move(){
     eBOX(calcx(0),calcy(0),12,6,BF_GREEN_BLACK,' ');
     int ArrX=0;
     int ArrY=0;
+    
     while(1){
         if(kbhit()){
             int pressKey=getch();
@@ -257,17 +414,22 @@ void piece_move(){
                     break;
                 case 13:
                     eBOX(calcx(ArrX),calcy(ArrY),12,6,BF_RED_BLACK,' ');
-                    logd(LOG_DEBUG, "is team black: %d/%d", ArrY, ArrX);
+
                     if(board[ArrY][ArrX] != NULL) {
-                        logd(LOG_DEBUG, "is team black");
-                        if(board[ArrY][ArrX]->team == TEAM_BLACK) {
-                            logd(LOG_DEBUG, "is team black");
-                            if(print_path(board[ArrY][ArrX], TEAM_BLACK, BF_RED_BLACK) > 0) {
+                        if(board[ArrY][ArrX]->team == curTeam) {
+                            if(print_path(board[ArrY][ArrX], curTeam, BF_RED_BLACK) > 0) {
                                 // team change
                                 // update score
                                 // kill malr
+                                if(curTeam == TEAM_BLACK){
+                                    curTeam = TEAM_WHITE;
+                                }
+                                else if(curTeam == TEAM_WHITE){
+                                    curTeam = TEAM_BLACK;
+                                }
                             }
                         }
+                        
                     }
                     break;
             }
@@ -328,7 +490,7 @@ void set_default(Player *player){
         player->King.team = TEAM_BLACK;
         board[player->King.y][player->King.x] = &(player->King);
         
-        player->Queen.x = 5;
+        player->Queen.x = 3;
         player->Queen.y = 0;
         player->Queen.type = TYPE_QUEEN;
         player->Queen.team = TEAM_BLACK;
@@ -358,7 +520,7 @@ void set_default(Player *player){
         player->Knight[1].team = TEAM_BLACK;
         board[player->Knight[1].y][player->Knight[1].x] = &(player->Knight[1]);
 
-        player->Bishop[0].x = 3;
+        player->Bishop[0].x = 2;
         player->Bishop[0].y = 0;
         player->Bishop[0].type = TYPE_BISHOP;
         player->Bishop[0].team = TEAM_BLACK;
@@ -381,56 +543,56 @@ void set_default(Player *player){
         player->King.x = 4;
         player->King.y = 7;
         player->King.type = TYPE_KING;
-        player->King.team = TEAM_BLACK;
+        player->King.team = TEAM_WHITE;
         board[player->King.y][player->King.x] = &(player->King);
         
-        player->Queen.x = 5;
+        player->Queen.x = 3;
         player->Queen.y = 7;
         player->Queen.type = TYPE_QUEEN;
-        player->Queen.team = TEAM_BLACK;
+        player->Queen.team = TEAM_WHITE;
         board[player->Queen.y][player->Queen.x] = &(player->Queen);
 
         player->Rook[0].x = 0;
         player->Rook[0].y = 7;
         player->Rook[0].type = TYPE_ROOK;
-        player->Rook[0].team = TEAM_BLACK;
+        player->Rook[0].team = TEAM_WHITE;
         board[player->Rook[0].y][player->Rook[0].x] = &(player->Rook[0]);
         
         player->Rook[1].x = 7;
         player->Rook[1].y = 7;
         player->Rook[1].type = TYPE_ROOK;
-        player->Rook[1].team = TEAM_BLACK;
+        player->Rook[1].team = TEAM_WHITE;
         board[player->Rook[1].y][player->Rook[1].x] = &(player->Rook[1]);
 
         player->Knight[0].x = 1;
         player->Knight[0].y = 7;
         player->Knight[0].type = TYPE_KNIGHT;
-        player->Knight[0].team = TEAM_BLACK;
+        player->Knight[0].team = TEAM_WHITE;
         board[player->Knight[0].y][player->Knight[0].x] = &(player->Rook[1]);
 
         player->Knight[1].x = 6;
         player->Knight[1].y = 7;
         player->Knight[1].type = TYPE_KNIGHT;
-        player->Knight[1].team = TEAM_BLACK;
+        player->Knight[1].team = TEAM_WHITE;
         board[player->Knight[1].y][player->Knight[1].x] = &(player->Knight[1]);
         
-        player->Bishop[0].x = 3;
+        player->Bishop[0].x = 2;
         player->Bishop[0].y = 7;
         player->Bishop[0].type = TYPE_BISHOP;
-        player->Bishop[0].team = TEAM_BLACK;
+        player->Bishop[0].team = TEAM_WHITE;
         board[player->Bishop[0].y][player->Bishop[0].x] = &(player->Bishop[0]);
 
         player->Bishop[1].x = 5;
         player->Bishop[1].y = 7;
         player->Bishop[1].type = TYPE_BISHOP;
-        player->Bishop[1].team = TEAM_BLACK;
+        player->Bishop[1].team = TEAM_WHITE;
         board[player->Bishop[1].y][player->Bishop[1].x] = &(player->Bishop[1]);
 
         for(i = 0; i <= 7; i++){
             player->Pawn[i].x = i;
             player->Pawn[i].y = 6;
             player->Pawn[i].type = TYPE_PAWN;
-            player->Pawn[i].team = TEAM_BLACK;
+            player->Pawn[i].team = TEAM_WHITE;
             board[player->Pawn[i].y][player->Pawn[i].x] = &(player->Pawn[i]);
         }      
     }
