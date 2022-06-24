@@ -10,20 +10,27 @@
 //////////////////////////////////////////////////
 // definition
 //////////////////////////////////////////////////
-#define TEAM_BLACK 0
-#define TEAM_WHITE 1
+#define TEAM_NONE 0
+#define TEAM_BLACK 1
+#define TEAM_WHITE 2
 #define TYPE_KING 0
 #define TYPE_QUEEN 1
 #define TYPE_ROOK 2
 #define TYPE_BISHOP 3
 #define TYPE_KNIGHT 4
 #define TYPE_PAWN 5
+#define MAX_BOARD_X 8
+#define MAX_BOARD_Y 8
+
+int curTeam = TEAM_BLACK;
 
 typedef struct _piece {
     int type;
     int isDead;
     int x;
     int y;
+    int team;
+    int moved;
 }Piece;
 
 typedef struct _player{
@@ -41,26 +48,272 @@ typedef struct _rule{
     int timeOver;
 }Rule;
 
+Piece* board[MAX_BOARD_Y][MAX_BOARD_X] = {0};
+
 //////////////////////////////////////////////////
 // definition
 //////////////////////////////////////////////////
-void print_path(Piece *pi){
-    switch(pi->type)
-    {
-        case TYPE_KING :
-        {
-            //pi->x-1 pi->y-1
-            //pi->x+0 pi->y-1
-            //pi->x+1 pi->y-1
-            //pi->x-1 pi->y+0
-            //pi->x+1 pi->y+0
-            //pi->x-1 pi->y+0
-            //pi->x+0 pi->y+1
-            //pi->x+1 pi->y+1
-            
-            
+int calcx(int calcx){
+    int x;
+    if(calcx==0)
+        x=2;
+    else
+        x=2+calcx*12;
+    return x;
+}
+
+int calcy(int calcy){
+    int y;
+    if(calcy==0)
+        y=1;
+    else
+        y=1+calcy*6;
+    return y;
+}
+
+void movable_space(int x, int y, int color) {
+    setColor(color);
+    gotoXY(calcx(x)+9,calcy(y)+1);
+    printf(" ");
+}
+
+int print_path(Piece *pi, int team, int color){
+    int i,j;
+    int cnt=0;
+
+    if(pi == NULL) {
+        return 0;
+    }
+
+    switch(pi->type) {
+        case TYPE_KING: {
+            for(i=-1;i<=1;i++){
+                for(j=-1;j<=1;j++){
+                    if(i==0&&j==0){
+                        continue;
+                    }
+                    if(pi->x+j<0&&pi->x+j>=MAX_BOARD_X){
+                        continue;
+                    }
+                     if(pi->y+i<0&&pi->y+i>=MAX_BOARD_Y){
+                        continue;
+                    }
+                    if(board[pi->y+i][pi->x+j] != NULL){
+                        if(!board[pi->y+i][pi->x+j]->isDead && board[pi->y+i][pi->x+j]->team == team) {
+                            continue;
+                        }
+                    }
+    
+                    movable_space(pi->y+i,pi->x+j, color);      
+                    cnt++;
+                }
+            }
             break;
         }
+        case TYPE_PAWN: {
+            if(team == TEAM_BLACK) {
+                if(pi->y+1 >= MAX_BOARD_Y){
+                    break;
+                }
+                // check front space 
+                if (board[pi->y+1][pi->x] == NULL) {
+                    movable_space(pi->x, pi->y+1, color);
+                    cnt++;
+                } else {
+                    if (board[pi->y+1][pi->x]->isDead) {
+                        movable_space(pi->x, pi->y+1, color);
+                        cnt++;
+                    }
+                }
+
+                // check 2 front space
+                if(!pi->moved) {
+                    if (board[pi->y+2][pi->x] == NULL) {
+                        movable_space(pi->x, pi->y+2, color);
+                        cnt++;
+                    } else {
+                        if (board[pi->y+2][pi->x]->isDead) {
+                            movable_space(pi->x, pi->y+2, color);
+                            cnt++;
+                        }
+                    }
+                }
+
+                // check diagonal (left)
+                if(pi->y+1 < MAX_BOARD_Y && pi->x+(-1) >= 0){
+                    if (board[pi->y+1][pi->x+(-1)] != NULL) {
+                        if (!board[pi->y+1][pi->x+(-1)]->isDead && board[pi->y+1][pi->x+(-1)]->team != team) {
+                            movable_space(pi->x+(-1), pi->y+1, color);
+                            cnt++;
+                        }
+                    }
+                }
+                
+                // check diagonal (right)
+                if(pi->y+1 < MAX_BOARD_Y && pi->x+(+1) < MAX_BOARD_X){    
+                    if(board[pi->y+1][pi->x+(+1)] != NULL) {
+                        if (!board[pi->y+1][pi->x+(+1)]->isDead && board[pi->y+1][pi->x+(+1)]->team != team) {
+                            movable_space(pi->x+(+1), pi->y+1, color);
+                            cnt++;
+                        }
+                    }
+                }
+            }
+
+            else if(team == TEAM_WHITE) {
+                if(pi->y-1 <0){
+                    break;
+                }
+                // check front space 
+                if (board[pi->y-1][pi->x] == NULL) {
+                    movable_space(pi->x, pi->y-1, color);
+                    cnt++;
+                } else {
+                    if (board[pi->y-1][pi->x]->isDead) {
+                        movable_space(pi->x, pi->y-1, color);
+                        cnt++;
+                    }
+                }
+
+                // check 2 front space
+                if(!pi->moved) {
+                    if (board[pi->y-2][pi->x] == NULL) {
+                        movable_space(pi->x, pi->y-2, color);
+                        cnt++;
+                    } else {
+                        if (board[pi->y-2][pi->x]->isDead) {
+                            movable_space(pi->x, pi->y-2, color);
+                            cnt++;
+                        }
+                    }
+                }
+
+                // check diagonal (left)
+                if(pi->y-1 >= 0 && pi->x+(-1) >= 0){
+                    if (board[pi->y-1][pi->x+(-1)] != NULL) {
+                        if (!board[pi->y-1][pi->x+(-1)]->isDead && board[pi->y-1][pi->x+(-1)]->team != team) {
+                            movable_space(pi->x+(-1), pi->y-1, color);
+                            cnt++;
+                        }
+                    }
+                }
+                
+                // check diagonal (right)
+                if(pi->y-1 >= 0 && pi->x+(+1) < MAX_BOARD_X){    
+                    if(board[pi->y-1][pi->x+(+1)] != NULL) {
+                        if (!board[pi->y-1][pi->x+(+1)]->isDead && board[pi->y-1][pi->x+(+1)]->team != team) {
+                            movable_space(pi->x+(+1), pi->y-1, color);
+                            cnt++;
+                        }
+                    }
+                }
+            }
+            break;
+        }
+        case TYPE_KNIGHT:{
+            //check down
+            if(pi->y+2 < MAX_BOARD_Y){
+                if(pi->x-1 > -1){
+                    if(board[pi->y+2][pi->x-1] == NULL){
+                        movable_space(pi->x-1, pi->y+2, color);
+                        cnt++;
+                    }
+                    else if(board[pi->y+2][pi->x-1]->isDead){
+                        movable_space(pi->x-1, pi->y+2, color);
+                        cnt++;
+                    }
+                }
+                if(pi->x+1 < MAX_BOARD_X){
+                    if(board[pi->y+2][pi->x+1] == NULL){
+                        movable_space(pi->x+1, pi->y+2, color);
+                        cnt++;
+                    }
+                    else if(board[pi->y+2][pi->x+1]->isDead){
+                        movable_space(pi->x+1, pi->y+2, color);
+                        cnt++;
+                    }
+                }
+            }
+
+            //check up
+            if(pi->y-2 > -1){
+                if(pi->x-1 > -1){
+                    if(board[pi->y-2][pi->x-1] == NULL){
+                        movable_space(pi->x-1, pi->y-2, color);
+                        cnt++;
+                    }
+                    else if(board[pi->y-2][pi->x-1]->isDead){
+                        movable_space(pi->x-1, pi->y-2, color);
+                        cnt++;
+                    }
+                }
+                if(pi->x+1 < MAX_BOARD_X){
+                    if(board[pi->y-2][pi->x+1] == NULL){
+                        movable_space(pi->x+1, pi->y-2, color);
+                        cnt++;
+                    }
+                    else if(board[pi->y-2][pi->x+1]->isDead){
+                        movable_space(pi->x+1, pi->y-2, color);
+                        cnt++;
+                    }
+                }
+            }
+
+            //check right
+            if(pi->x+2 < MAX_BOARD_X){
+                if(pi->y-1 > -1){
+                    if(board[pi->y-1][pi->x+2] == NULL){
+                        movable_space(pi->x+2, pi->y-1, color);
+                        cnt++;
+                    }
+                    else if(board[pi->y-1][pi->x+2]->isDead){
+                        movable_space(pi->x+2, pi->y-1, color);
+                        cnt++;
+                    }
+                }
+                if(pi->y+1 < MAX_BOARD_Y){
+                    if(board[pi->y+1][pi->x+2] == NULL){
+                        movable_space(pi->x+2, pi->y+1, color);
+                        cnt++;
+                    }
+                    else if(board[pi->y+1][pi->x+2]->isDead){
+                        movable_space(pi->x+2, pi->y+1, color);
+                        cnt++;
+                    }
+                }
+            }
+
+            //check left
+            if(pi->x-2 > -1){
+                if(pi->y-1 > -1){
+                    if(board[pi->y-1][pi->x-2] == NULL){
+                        movable_space(pi->x-2, pi->y-1, color);
+                        cnt++;
+                    }
+                    else if(board[pi->y-1][pi->x-2]->isDead){
+                        movable_space(pi->x-2, pi->y-1, color);
+                        cnt++;
+                    }
+                }
+                if(pi->y+1 < MAX_BOARD_Y){
+                    if(board[pi->y+1][pi->x-2] == NULL){
+                        movable_space(pi->x-2, pi->y+1, color);
+                        cnt++;
+                    }
+                    else if(board[pi->y+1][pi->x-2]->isDead){
+                        movable_space(pi->x-2, pi->y+1, color);
+                        cnt++;
+                    }
+                }
+            }
+            break;
+        }
+    }
+
+    if(cnt>0){
+        return 1;
+    } else{
+        return 0;
     }
 }
 
@@ -105,28 +358,12 @@ int chessArr[8][8]={{1,0,1,0,1,0,1,0},  // 0 = BF_BLACK_WHITE, 1 = BF_LWHITE_BLA
                     {0,1,0,1,0,1,0,1}
 };
 
-int calcx(int calcx){
-    int x;
-    if(calcx==0)
-        x=2;
-    else
-        x=2+calcx*12;
-    return x;
-}
-int calcy(int calcy){
-    int y;
-    if(calcy==0)
-        y=1;
-    else
-        y=1+calcy*6;
-    return y;
-}
-
 void piece_move(){
 
     eBOX(calcx(0),calcy(0),12,6,BF_GREEN_BLACK,' ');
     int ArrX=0;
     int ArrY=0;
+    
     while(1){
         if(kbhit()){
             int pressKey=getch();
@@ -177,6 +414,23 @@ void piece_move(){
                     break;
                 case 13:
                     eBOX(calcx(ArrX),calcy(ArrY),12,6,BF_RED_BLACK,' ');
+
+                    if(board[ArrY][ArrX] != NULL) {
+                        if(board[ArrY][ArrX]->team == curTeam) {
+                            if(print_path(board[ArrY][ArrX], curTeam, BF_RED_BLACK) > 0) {
+                                // team change
+                                // update score
+                                // kill malr
+                                if(curTeam == TEAM_BLACK){
+                                    curTeam = TEAM_WHITE;
+                                }
+                                else if(curTeam == TEAM_WHITE){
+                                    curTeam = TEAM_BLACK;
+                                }
+                            }
+                        }
+                        
+                    }
                     break;
             }
         }
@@ -228,107 +482,118 @@ void print_default(Player *p){
 }
 
 void set_default(Player *player){
+    int i;
     if (player->color == TEAM_BLACK){
-        int i;
         player->King.x = 4;
         player->King.y = 0;
-        player->King.isDead = 0;
         player->King.type = TYPE_KING;
+        player->King.team = TEAM_BLACK;
+        board[player->King.y][player->King.x] = &(player->King);
         
-        player->Queen.x = 5;
+        player->Queen.x = 3;
         player->Queen.y = 0;
-        player->Queen.isDead = 0;
         player->Queen.type = TYPE_QUEEN;
+        player->Queen.team = TEAM_BLACK;
+        board[player->Queen.y][player->Queen.x] = &(player->Queen);
 
         player->Rook[0].x = 0;
         player->Rook[0].y = 0;
-        player->Rook[0].isDead = 0;
         player->Rook[0].type = TYPE_ROOK;
+        player->Rook[0].team = TEAM_BLACK;
+        board[player->Rook[0].y][player->Rook[0].x] = &(player->Rook[0]);
         
         player->Rook[1].x = 7;
         player->Rook[1].y = 0;
-        player->Rook[1].isDead = 0;
         player->Rook[1].type = TYPE_ROOK;
+        player->Rook[1].team = TEAM_BLACK;
+        board[player->Rook[1].y][player->Rook[1].x] = &(player->Rook[1]);
 
         player->Knight[0].x = 1;
         player->Knight[0].y = 0;
-        player->Knight[0].isDead = 0;
         player->Knight[0].type = TYPE_KNIGHT;
+        player->Knight[0].team = TEAM_BLACK;
+        board[player->Knight[0].y][player->Knight[0].x] = &(player->Knight[0]);
 
         player->Knight[1].x = 6;
         player->Knight[1].y = 0;
-        player->Knight[1].isDead = 0;  
         player->Knight[1].type = TYPE_KNIGHT;
-        
-        player->Bishop[0].x = 3;
+        player->Knight[1].team = TEAM_BLACK;
+        board[player->Knight[1].y][player->Knight[1].x] = &(player->Knight[1]);
+
+        player->Bishop[0].x = 2;
         player->Bishop[0].y = 0;
-        player->Bishop[0].isDead = 0;
         player->Bishop[0].type = TYPE_BISHOP;
-        
+        player->Bishop[0].team = TEAM_BLACK;
+        board[player->Bishop[0].y][player->Bishop[0].x] = &(player->Bishop[0]);
+
         player->Bishop[1].x = 5;
         player->Bishop[1].y = 0;
-        player->Bishop[1].isDead = 0;
         player->Bishop[1].type = TYPE_BISHOP;
+        player->Bishop[1].team = TEAM_BLACK;
+        board[player->Bishop[1].y][player->Bishop[1].x] = &(player->Bishop[1]);
 
         for(i = 0; i <= 7; i++){
             player->Pawn[i].x = i;
             player->Pawn[i].y = 1;
-            player->Pawn[i].isDead = 0;
             player->Pawn[i].type = TYPE_PAWN;
+            player->Pawn[i].team = TEAM_BLACK;
+            board[player->Pawn[i].y][player->Pawn[i].x] = &(player->Pawn[i]);
         }      
-    }
-    else if(player->color == TEAM_WHITE){
-        int i;
+    } else if(player->color == TEAM_WHITE) {
         player->King.x = 4;
         player->King.y = 7;
-        player->King.isDead = 0;
         player->King.type = TYPE_KING;
+        player->King.team = TEAM_WHITE;
+        board[player->King.y][player->King.x] = &(player->King);
         
-        player->Queen.x = 5;
+        player->Queen.x = 3;
         player->Queen.y = 7;
-        player->Queen.isDead = 0;
         player->Queen.type = TYPE_QUEEN;
+        player->Queen.team = TEAM_WHITE;
+        board[player->Queen.y][player->Queen.x] = &(player->Queen);
 
         player->Rook[0].x = 0;
         player->Rook[0].y = 7;
-        player->Rook[0].isDead = 0;
         player->Rook[0].type = TYPE_ROOK;
+        player->Rook[0].team = TEAM_WHITE;
+        board[player->Rook[0].y][player->Rook[0].x] = &(player->Rook[0]);
         
         player->Rook[1].x = 7;
         player->Rook[1].y = 7;
-        player->Rook[1].isDead = 0;
         player->Rook[1].type = TYPE_ROOK;
+        player->Rook[1].team = TEAM_WHITE;
+        board[player->Rook[1].y][player->Rook[1].x] = &(player->Rook[1]);
 
         player->Knight[0].x = 1;
         player->Knight[0].y = 7;
-        player->Knight[0].isDead = 0;
         player->Knight[0].type = TYPE_KNIGHT;
-
+        player->Knight[0].team = TEAM_WHITE;
+        board[player->Knight[0].y][player->Knight[0].x] = &(player->Knight[0]);
 
         player->Knight[1].x = 6;
         player->Knight[1].y = 7;
-        player->Knight[1].isDead = 0;  
         player->Knight[1].type = TYPE_KNIGHT;
-
+        player->Knight[1].team = TEAM_WHITE;
+        board[player->Knight[1].y][player->Knight[1].x] = &(player->Knight[1]);
         
-        player->Bishop[0].x = 3;
+        player->Bishop[0].x = 2;
         player->Bishop[0].y = 7;
-        player->Bishop[0].isDead = 0;
         player->Bishop[0].type = TYPE_BISHOP;
+        player->Bishop[0].team = TEAM_WHITE;
+        board[player->Bishop[0].y][player->Bishop[0].x] = &(player->Bishop[0]);
 
-        
         player->Bishop[1].x = 5;
         player->Bishop[1].y = 7;
-        player->Bishop[1].isDead = 0;
         player->Bishop[1].type = TYPE_BISHOP;
-
+        player->Bishop[1].team = TEAM_WHITE;
+        board[player->Bishop[1].y][player->Bishop[1].x] = &(player->Bishop[1]);
 
         for(i = 0; i <= 7; i++){
             player->Pawn[i].x = i;
             player->Pawn[i].y = 6;
-            player->Pawn[i].isDead = 0;
             player->Pawn[i].type = TYPE_PAWN;
-
+            player->Pawn[i].team = TEAM_WHITE;
+            board[player->Pawn[i].y][player->Pawn[i].x] = &(player->Pawn[i]);
         }      
     }
 }
@@ -337,12 +602,20 @@ void game()
 {
     Player black;
     Player white;
+
+    memset(&black, 0, sizeof(Player));
+    memset(&white, 0, sizeof(Player));
+
     black.color = TEAM_BLACK;
     white.color = TEAM_WHITE;
+
     set_default(&black);
     set_default(&white);
+
     print_default(&black);
     print_default(&white);
+
     piece_move();
+
     // game_rule();
 }

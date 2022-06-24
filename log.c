@@ -71,7 +71,7 @@ void log_debug(int priority, const char *function, int line, char *fmt, ...)
     }
     // TODO: need a function length checker (max:20?)
     
-    pos = snprintf(str, sizeof(str), "[%s][%s():%d] ", function, line, get_string_priority(priority));
+    pos = snprintf(str, sizeof(str), "[%s][%20s():%d] ",get_string_priority(priority), function, line );
 
     va_start(vlist, fmt);
     pos += vsnprintf(str+pos, sizeof(str)-pos, fmt, vlist);
