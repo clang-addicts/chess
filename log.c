@@ -55,7 +55,6 @@ void log_general(int priority, char *fmt, ...)
     va_end(vlist);
 
     str[pos]='\n';
-    //printf("%s", str);
     write_to_file(str, sizeof(str));
 }
 
@@ -65,20 +64,23 @@ void log_debug(int priority, const char *function, int line, char *fmt, ...)
     const char *pri_str = get_string_priority(priority);
     char str[512]       = {0,};
     int pos             = 0;
+    time_t mt           = time(NULL);
+    struct tm mtms      = *localtime(&mt);
 
     if(!function) {
         function = "unknown";
     }
-    // TODO: need a function length checker (max:20?)
-    
-    pos = snprintf(str, sizeof(str), "[%s][%20s():%d] ",get_string_priority(priority), function, line );
+
+    pos = snprintf(str, sizeof(str), "[%04d/%02d/%02d %02d:%02d:%02d][%s][%20s():%d] ",
+        mtms.tm_year + 1900, mtms.tm_mon + 1, mtms.tm_mday,
+        mtms.tm_hour, mtms.tm_min, mtms.tm_sec,
+        get_string_priority(priority), function, line);
 
     va_start(vlist, fmt);
     pos += vsnprintf(str+pos, sizeof(str)-pos, fmt, vlist);
     va_end(vlist);
 
     str[pos]='\n';
-    //printf("%s", str);
     write_to_file(str, sizeof(str));
 }
 

@@ -3,348 +3,132 @@
 char buffer[4096] = "Hello, World!";
 #define PORT 9000
 
-/////////////////////////////// SERVER
-#define WIN32_LEAN_AND_MEAN
-
-#include <windows.h>
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <stdlib.h>
-#include <stdio.h>
-// Need to link with Ws2_32.lib
-#pragma comment (lib, "Ws2_32.lib")
-// #pragma comment (lib, "Mswsock.lib")
-
-#define DEFAULT_BUFLEN 512
-#define DEFAULT_PORT "27015"
-/////////////////////////////// SERVER
-
-/////////////////////////////// CLIENT
-#define WIN32_LEAN_AND_MEAN
-
-#include <windows.h>
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <stdlib.h>
-#include <stdio.h>
-// Need to link with Ws2_32.lib, Mswsock.lib, and Advapi32.lib
-#pragma comment (lib, "Ws2_32.lib")
-#pragma comment (lib, "Mswsock.lib")
-#pragma comment (lib, "AdvApi32.lib")
-
-
-#define DEFAULT_BUFLEN 512
-#define DEFAULT_PORT "27015"
-/////////////////////////////// CLIENT
-
 void* network_find_opponet() {
     printf("find net opponet!\n");   
     return NULL;
 }
 
-#if 0
 void wait_for_opponet()
 {
-	int c_socket, s_socket;
-	struct sockaddr_in s_addr;
-	struct sockaddr_in c_addr;
-	int len;
-	int n;
-	
-	//SOCKET SETTINGS FOR A TCP TYPE SOCKET
-	s_socket = socket(PF_INET,SOCK_STREAM,0);
-	//Sets all s_addr value to 0
-	memset(&s_addr, 0, sizeof(s_addr));
-	
-	//Setting Request Acception Settings
-	//PORT: 9000
-	//IP: ANY IP SET TO MY COMPUTER
-	//IPV4
-	s_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-	s_addr.sin_family = AF_INET;
-	s_addr.sin_port = htons(PORT);
-
-	//Binds socket to the port/address/whatever more
-	if(bind(s_socket, (struct sockaddr*) &s_addr, sizeof(s_addr))==-1){
-		printf("CANNOT BIND\n");
-		return -1;
-	}
-
-		
-	if(listen(s_socket,5)==-1){
-		printf("listen fail\n");
-		return -1;
-	}
-	
-	while(1){
-		len = sizeof(c_addr);
-		c_socket=accept(s_socket,(struct sockaddr*)&c_addr, &len);
-		
-		n = strlen(buffer);
-		write(c_socket,buffer,n);
-		
-		close(c_socket);
-	}
-	close(s_socket);
-}
-#else
-void wait_for_opponet()
-{
-#if 0
-	SOCKET server_socket = INVALID_SOCKET;
-	SOCKET client_socket = INVALID_SOCKET;
-	struct sockaddr_in service;
 	WSADATA wsaData;
+    struct addrinfo addr_hint;
+    struct addrinfo *addr_result    = NULL;
+    SOCKET server_socket            = INVALID_SOCKET;
+    SOCKET client_socket            = INVALID_SOCKET;
+    int res                         = 0;
+    char buf[DEFAULT_BUFLEN]        = {0};
 
-	log(LOG_DEBUG, "wait opponet starting");
-
-	// https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-wsastartup
-	int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-	if (iResult != NO_ERROR) {
-		log(LOG_ERR, "WSAStartup() failed");
-        return;
-    }
-
-	// https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-socket
-	server_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (server_socket == INVALID_SOCKET) {
-		log(LOG_ERR, "socket() failed %d", WSAGetLastError());
-		WSACleanup();
-		return;
-	}
-
-	service.sin_family = AF_INET;
-	service.sin_addr.s_addr = inet_addr("127.0.0.1");
-	service.sin_port = htons(PORT);
-
-	// https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-bind
-	if(bind(server_socket, (SOCKADDR*) &service, sizeof(service)) == SOCKET_ERROR) {
-		log(LOG_ERR, "bind() failed %d", WSAGetLastError());
-		goto err;
-	}
-
-	// https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-listen
-	log(LOG_DEBUG, "listening...");
-	if(listen(server_socket, SOMAXCONN) == SOCKET_ERROR) {
-		log(LOG_ERR, "listen() failed %d", WSAGetLastError());
-		goto err;	
-	}
-
-	// https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-accept
-	log(LOG_DEBUG, "accepting...");
-	client_socket = accept(server_socket, NULL, NULL);
-	if(client_socket == INVALID_SOCKET) {
-		log(LOG_ERR, "accept() failed %d", WSAGetLastError());
-		goto err;	
-	}
-
-    // Receive until the peer closes the connection
-	// https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-send
-	int res = 1;
-    do {
-		char recvbuf[512] = {0};
-		log(LOG_DEBUG, "recving...");
-		res = recv(client_socket, recvbuf, (int)strlen(recvbuf), 0);
-        if ( res> 0 ) {
-			log(LOG_ERR, "Bytes received: %d, msg:%s", res, recvbuf);
-		}else if (res == 0) {
-			log(LOG_ERR, "Bytes received: %d, msg:%s", res, recvbuf);
-			log(LOG_ERR, "Connection closed" );
-		}else{
-			log(LOG_ERR, "recv failed with error: %d", WSAGetLastError());
-		}
-
-	} while( res >= 0 );	
-
-err:
-	log(LOG_DEBUG, "closing server socket...");
-	if(closesocket(server_socket)==SOCKET_ERROR) {
-		log(LOG_ERR, "closesocket() failed %d", WSAGetLastError());
-		return;
-	}
-	WSACleanup();
-#else
-	WSADATA wsaData;
-    int iResult;
-
-    SOCKET ListenSocket = INVALID_SOCKET;
-    SOCKET ClientSocket = INVALID_SOCKET;
-
-    struct addrinfo *result = NULL;
-    struct addrinfo hints;
-
-    int iSendResult;
-    char recvbuf[DEFAULT_BUFLEN];
-    int recvbuflen = DEFAULT_BUFLEN;
+    // https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/aa366920(v=vs.85)
+    ZeroMemory(&addr_hint, sizeof(addr_hint));
     
-    // Initialize Winsock
-    iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
-    if (iResult != 0) {
-        printf("WSAStartup failed with error: %d\n", iResult);
+    // initialize winsock
+    // https://docs.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-wsastartup
+    res = WSAStartup(MAKEWORD(2,2), &wsaData);
+    if(res != 0) {
+        logd(LOG_ERR, "failed with error: %d", res);
         return;
     }
 
-    ZeroMemory(&hints, sizeof(hints));
-    hints.ai_family = AF_INET;
-    hints.ai_socktype = SOCK_STREAM;
-    hints.ai_protocol = IPPROTO_TCP;
-    hints.ai_flags = AI_PASSIVE;
+    addr_hint.ai_family     = AF_INET;
+    addr_hint.ai_socktype   = SOCK_STREAM;
+    addr_hint.ai_protocol   = IPPROTO_TCP;
+    addr_hint.ai_flags      = AI_PASSIVE;
 
-    // Resolve the server address and port
-    iResult = getaddrinfo(NULL, DEFAULT_PORT, &hints, &result);
-    if ( iResult != 0 ) {
-        printf("getaddrinfo failed with error: %d\n", iResult);
-        WSACleanup();
-        return;
+    // resolve address and port
+    // https://docs.microsoft.com/en-us/windows/win32/api/ws2tcpip/nf-ws2tcpip-getaddrinfo
+    res = getaddrinfo(NULL, DEFAULT_PORT, &addr_hint, &addr_result);
+    if(res != 0) {
+        logd(LOG_ERR, "failed with error: %d", res);
+        goto error_server;
     }
 
-    // Create a SOCKET for connecting to server
-    ListenSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
-    if (ListenSocket == INVALID_SOCKET) {
-        printf("socket failed with error: %ld\n", WSAGetLastError());
-        freeaddrinfo(result);
-        WSACleanup();
-        return;
+    // create a SOCKET for connecting to server
+    // https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-socket
+    server_socket = socket(addr_result->ai_family, addr_result->ai_socktype, addr_result->ai_protocol);
+    if(server_socket == INVALID_SOCKET) {
+        logd(LOG_ERR, "failed with error: %ld", WSAGetLastError());
+        goto error_server;
     }
 
-    // Setup the TCP listening socket
-    iResult = bind( ListenSocket, result->ai_addr, (int)result->ai_addrlen);
-    if (iResult == SOCKET_ERROR) {
-        printf("bind failed with error: %d\n", WSAGetLastError());
-        freeaddrinfo(result);
-        closesocket(ListenSocket);
-        WSACleanup();
-        return;
+    // setup the TCP listening socket
+	// https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-bind
+    res = bind(server_socket, addr_result->ai_addr, (int)addr_result->ai_addrlen);
+    if(res == SOCKET_ERROR) {
+        logd(LOG_ERR, "failed with error: %ld", WSAGetLastError());
+        goto error_server;
     }
 
-    freeaddrinfo(result);
-
-    iResult = listen(ListenSocket, SOMAXCONN);
-    if (iResult == SOCKET_ERROR) {
-        printf("listen failed with error: %d\n", WSAGetLastError());
-        closesocket(ListenSocket);
-        WSACleanup();
-        return;
+    // start listening to TCP socket
+	// https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-listen
+    res = listen(server_socket, SOMAXCONN);
+    if (res == SOCKET_ERROR) {
+        logd(LOG_ERR, "failed with error: %ld", WSAGetLastError());
+        goto error_server;
     }
 
-    // Accept a client socket
-    ClientSocket = accept(ListenSocket, NULL, NULL);
-    if (ClientSocket == INVALID_SOCKET) {
-        printf("accept failed with error: %d\n", WSAGetLastError());
-        closesocket(ListenSocket);
-        WSACleanup();
-        return;
+    // accept a client socket
+	// https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-accept
+    client_socket = accept(server_socket, NULL, NULL);
+    if(client_socket == INVALID_SOCKET) {
+        logd(LOG_ERR, "failed with error: %ld", WSAGetLastError());
+        goto error_server;
     }
 
-    // No longer need server socket
-    closesocket(ListenSocket);
-
-    // Receive until the peer shuts down the connection
+    // receive until the peer shuts down the connection
     do {
+        // wait until client sends data
+        // https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-recv
+        res = recv(client_socket, buf, strlen(buf), 0);
+        if(res > 0) {
+            logd(LOG_DEBUG, "[Server] received: %d bytes", res);
+            logd(LOG_DEBUG, "[Server] received string: %s", buf);
 
-        iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
-        if (iResult > 0) {
-            printf("Bytes received: %d\n", iResult);
+            snprintf(buf, DEFAULT_BUFLEN, "Hello Client! I'm the SERVER!");
+            logd(LOG_DEBUG, "[Server] sending: %d bytes", strlen(buf));
+            logd(LOG_DEBUG, "[Server] sending string: %s", buf);
 
-        // Echo the buffer back to the sender
-            log(LOG_DEBUG, "sending recved: %s", recvbuf);
-            iSendResult = send( ClientSocket, recvbuf, iResult, 0 );
-            if (iSendResult == SOCKET_ERROR) {
-                printf("send failed with error: %d\n", WSAGetLastError());
-                closesocket(ClientSocket);
-                WSACleanup();
-                return;
+            // sending new data to client
+            // https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-send
+            res = send(client_socket, buf, strlen(buf), 0); //?????? maybe size has to do with long wait buffering? this param might be the cause
+            if (res == SOCKET_ERROR) {
+                logd(LOG_ERR, "failed with error: %ld", WSAGetLastError());
+                goto error_server;
             }
-            printf("Bytes sent: %d\n", iSendResult);
-        }
-        else if (iResult == 0)
-            printf("Connection closing...\n");
-        else  {
-            printf("recv failed with error: %d\n", WSAGetLastError());
-            closesocket(ClientSocket);
-            WSACleanup();
-            return;
+
+            logd(LOG_DEBUG, "[Server] received: %d bytes", res);
+        } else if (res == 0) {
+            logd(LOG_DEBUG, "[Server] closing connection");
+        } else {
+            logd(LOG_ERR, "failed with error: %ld", WSAGetLastError());
+            goto error_server;
         }
 
-    } while (iResult > 0);
+    } while(res > 0);
 
-    // shutdown the connection since we're done
-    iResult = shutdown(ClientSocket, SD_SEND);
-    if (iResult == SOCKET_ERROR) {
-        printf("shutdown failed with error: %d\n", WSAGetLastError());
-        closesocket(ClientSocket);
-        WSACleanup();
-        return;
+    // shutdown the connection 
+    res = shutdown(client_socket, SD_SEND);
+    if(res == SOCKET_ERROR) {
+        logd(LOG_ERR, "failed with error: %ld", WSAGetLastError());
+        goto error_server;
     }
 
-    // cleanup
-    closesocket(ClientSocket);
+error_server:
+    // clean up
+    if(addr_result) {
+        freeaddrinfo(addr_result);
+    }
+    if(server_socket) {
+        closesocket(server_socket);
+    }
+    if(client_socket) {
+        closesocket(client_socket);
+    }
     WSACleanup();
-
     return;
-#endif
 }
 
 void find_opponet()
 {
-#if 0
-	SOCKET client_socket = INVALID_SOCKET;
-	struct sockaddr_in service;
-	WSADATA wsaData;
-
-	log(LOG_DEBUG, "find_opponet starting");
-
-	// https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-wsastartup
-	int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-	if (iResult != NO_ERROR) {
-		log(LOG_ERR, "WSAStartup() failed");
-        return;
-    }
-
-	// https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-socket
-	client_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (client_socket == INVALID_SOCKET) {
-		log(LOG_ERR, "socket() failed %d", WSAGetLastError());
-		WSACleanup();
-		return;
-	}
-
-	service.sin_family = AF_INET;
-	service.sin_addr.s_addr = inet_addr("127.0.0.1");
-	service.sin_port = htons(PORT);
-
-	// https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-connect
-	log(LOG_DEBUG, "connecting...");
-	if (connect(client_socket, (SOCKADDR*)&service, sizeof(service)) == SOCKET_ERROR) {
-		log(LOG_ERR, "connect() failed %d", WSAGetLastError());
-		goto err_client;
-	}
-
-	char lol[512] = "hiiamserverfiuiquifhqeihfiuqhuihi1h2uieh1i2he1iu";
-	int sent;
-	log(LOG_DEBUG, "sending...");
-    if((sent=send(client_socket, lol, (int)strlen(lol), 0)) == SOCKET_ERROR) {
-		log(LOG_ERR, "send() failed %d", WSAGetLastError());
-		goto err_client;
-    }
-	log(LOG_DEBUG, "sent %d", sent);
-
-	Sleep(2000);
-	log(LOG_DEBUG, "shutdown...");
-    if(shutdown(client_socket, SD_BOTH) == SOCKET_ERROR) {
-		log(LOG_ERR, "shutdown() failed %d", WSAGetLastError());
-		goto err_client;
-    }	
-
-err_client:
-	log(LOG_DEBUG, "closing client socket...");
-	if(closesocket(client_socket) == SOCKET_ERROR) {
-		log(LOG_ERR, "closesocket() failed %d", WSAGetLastError());
-		return;
-	}
-	WSACleanup();
-#else
-	WSADATA wsaData;
     SOCKET ConnectSocket = INVALID_SOCKET;
     struct addrinfo *result = NULL,
                     *ptr = NULL,
@@ -354,96 +138,106 @@ err_client:
     int iResult;
     int recvbuflen = DEFAULT_BUFLEN;
 
-    // Initialize Winsock
-    iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
-    if (iResult != 0) {
-        printf("WSAStartup failed with error: %d\n", iResult);
+    ////////////////////////////////////////
+
+	WSADATA wsaData;
+    SOCKET client_socket            = INVALID_SOCKET;
+    struct addrinfo addr_hint;
+    struct addrinfo *addr_result    = NULL;
+    int res                         = 0;
+    char buf[DEFAULT_BUFLEN]        = {0};
+
+    // https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/aa366920(v=vs.85)
+    ZeroMemory(&addr_hint, sizeof(addr_hint));
+
+    // initialize winsock
+    // https://docs.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-wsastartup
+    res = WSAStartup(MAKEWORD(2,2), &wsaData);
+    if(res != 0) {
+        logd(LOG_ERR, "failed with error: %d", res);
         return;
     }
 
-    ZeroMemory( &hints, sizeof(hints) );
-    hints.ai_family = AF_UNSPEC;
-    hints.ai_socktype = SOCK_STREAM;
-    hints.ai_protocol = IPPROTO_TCP;
+    addr_hint.ai_family     = AF_UNSPEC;
+    addr_hint.ai_socktype   = SOCK_STREAM;
+    addr_hint.ai_protocol   = IPPROTO_TCP;
 
-    // Resolve the server address and port
-    iResult = getaddrinfo("127.0.0.1", DEFAULT_PORT, &hints, &result);
-    if ( iResult != 0 ) {
-        printf("getaddrinfo failed with error: %d\n", iResult);
-        WSACleanup();
-        return;
+    // resolve address and port
+    // https://docs.microsoft.com/en-us/windows/win32/api/ws2tcpip/nf-ws2tcpip-getaddrinfo
+    res = getaddrinfo(DEFAULT_IP, DEFAULT_PORT, &addr_hint, &addr_result);
+    if(res != 0) {
+        logd(LOG_ERR, "failed with error: %d", res);
+        goto error_client;
     }
 
-    // Attempt to connect to an address until one succeeds
-    for(ptr=result; ptr != NULL ;ptr=ptr->ai_next) {
-
-        // Create a SOCKET for connecting to server
-        ConnectSocket = socket(ptr->ai_family, ptr->ai_socktype, 
-            ptr->ai_protocol);
-        if (ConnectSocket == INVALID_SOCKET) {
-            printf("socket failed with error: %ld\n", WSAGetLastError());
-            WSACleanup();
-            return;
+    // TODO: study // attempt to connect to an address until one succeeds
+    for(ptr=addr_result; ptr != NULL ;ptr=ptr->ai_next) {
+        // create a socket to connect to server
+        client_socket = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
+        if(client_socket == INVALID_SOCKET) {
+            logd(LOG_ERR, "failed with error: %ld", WSAGetLastError());
+            goto error_client;
         }
 
-        // Connect to server.
-        iResult = connect( ConnectSocket, ptr->ai_addr, (int)ptr->ai_addrlen);
-        if (iResult == SOCKET_ERROR) {
-            closesocket(ConnectSocket);
-            ConnectSocket = INVALID_SOCKET;
+        // connect to server
+        res = connect(client_socket, ptr->ai_addr, (int)ptr->ai_addrlen);
+        if(res == SOCKET_ERROR) {
+            closesocket(client_socket);
+            client_socket = INVALID_SOCKET;
             continue;
         }
+
+        // stop if no error on connect()
         break;
     }
 
-    freeaddrinfo(result);
-
-    if (ConnectSocket == INVALID_SOCKET) {
-        printf("Unable to connect to server!\n");
-        WSACleanup();
-        return;
+    if(client_socket == INVALID_SOCKET) {
+        logd(LOG_ERR, "unable to connect, exiting");
+        goto error_client;
     }
 
-    // Send an initial buffer
-	log(LOG_DEBUG, "sending: %s", sendbuf);
-	iResult = send( ConnectSocket, sendbuf, (int)strlen(sendbuf), 0 );
-    if (iResult == SOCKET_ERROR) {
-        printf("send failed with error: %d\n", WSAGetLastError());
-        closesocket(ConnectSocket);
-        WSACleanup();
-        return;
-    }
+    snprintf(buf, DEFAULT_BUFLEN, "Hi, I'm the CLIENT. Nice to meet you!");
 
-    printf("Bytes Sent: %ld\n", iResult);
+    // send an initial buffer
+	logd(LOG_DEBUG, "[Client] sending: %d", strlen(buf));
+	logd(LOG_DEBUG, "[Client] sending string: %s", buf);
+	res = send(client_socket, buf, strlen(buf), 0);
+    if(res == SOCKET_ERROR) {
+        logd(LOG_ERR, "send failed with error: %d", WSAGetLastError());
+        goto error_client;
+    }
+	logd(LOG_DEBUG, "[Client] sent: %d", res);
 
     // shutdown the connection since no more data will be sent
-    iResult = shutdown(ConnectSocket, SD_SEND);
-    if (iResult == SOCKET_ERROR) {
-        printf("shutdown failed with error: %d\n", WSAGetLastError());
-        closesocket(ConnectSocket);
-        WSACleanup();
-        return;
+    res = shutdown(client_socket, SD_SEND);
+    if(res == SOCKET_ERROR) {
+        logd(LOG_ERR, "shutdown failed with error: %d", WSAGetLastError());
+        goto error_client;
     }
 
-    // Receive until the peer closes the connection
+    // receive until the peer closes the connection
     do {
+        ZeroMemory(buf, DEFAULT_BUFLEN);
+        res = recv(client_socket, buf, strlen(buf), 0);
+        if(res > 0) {
+            logd(LOG_DEBUG, "[Client] recieved: %d", res);
+            logd(LOG_DEBUG, "[Client] recieved string: %s", buf);
+        } else if (res == 0) {
+            logd(LOG_DEBUG, "[Client] connection closed");
+        } else {
+            logd(LOG_ERR, "[Client] recv() failed with error: %d", WSAGetLastError());
+        }
+    } while(res > 0);
 
-        iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
-        if ( iResult > 0 ){
-            printf("Bytes received: %d\n", iResult);
-            log(LOG_DEBUG, "str received: %s", recvbuf);
-		}else if ( iResult == 0 )
-            printf("Connection closed\n");
-        else
-            printf("recv failed with error: %d\n", WSAGetLastError());
-
-    } while( iResult > 0 );
-
+error_client:
     // cleanup
-    closesocket(ConnectSocket);
+    if(addr_result) {
+        freeaddrinfo(addr_result);
+    }
+    if(client_socket) {
+        closesocket(client_socket);
+    }
     WSACleanup();
 
     return;
-#endif
 }
-#endif // 0
