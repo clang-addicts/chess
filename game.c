@@ -98,13 +98,13 @@ int print_path(Piece *pi, int team, int color){
         case TYPE_KING: {
             for(i=-1;i<=1;i++){
                 for(j=-1;j<=1;j++){
-                    if(i==0||j==0){
+                    if(i==0&&j==0){
                         continue;
                     }
-                    if(pi->x+j<0||pi->x+j>=MAX_BOARD_X){
+                    if(pi->x+j<0&&pi->x+j>=MAX_BOARD_X){
                         continue;
                     }
-                     if(pi->y+i<0||pi->y+i>=MAX_BOARD_Y){
+                     if(pi->y+i<0&&pi->y+i>=MAX_BOARD_Y){
                         continue;
                     }
                     if(board[pi->y+i][pi->x+j] != NULL){
@@ -112,6 +112,7 @@ int print_path(Piece *pi, int team, int color){
                             continue;
                         }
                     }
+    
                     movable_space(pi->y+i,pi->x+j, color, cnt);      
                     cnt++;
                 }
@@ -120,184 +121,9 @@ int print_path(Piece *pi, int team, int color){
         }
 
         case TYPE_QUEEN: {
-            //DOWN
-            for(i=1;i<MAX_BOARD_Y;i++){
-                if(pi->y+i>=MAX_BOARD_Y){
-                    continue;
-                }
-                if(board[pi->y+i][pi->x]!=NULL){
-                    if(board[pi->y+i][pi->x]->isDead){
-                        movable_space(pi->x, pi->y+i, color, cnt);
-                        cnt++;
-                        continue;
-                    }
-                    if(board[pi->y+i][pi->x]->team!=team){
-                        movable_space(pi->x, pi->y+i-1, color, cnt);
-                        cnt++;
-                    }
-                    break;
-                }
-                else{
-                    movable_space(pi->x, pi->y+i, color, cnt);
-                    cnt++;
-                }
-            }
-            //UP
-            for(i=1;i<MAX_BOARD_Y;i++){
-                if(pi->y-i<0){
-                    continue;
-                }
-                if(board[pi->y-i][pi->x]!=NULL){
-                    if(board[pi->y-i][pi->x]->isDead){
-                        movable_space(pi->x, pi->y-i,color, cnt);
-                        cnt++;
-                        continue;
-                    }
-                    if(board[pi->y-i][pi->x]->team!=team){
-                        movable_space(pi->x, pi->y-i+1, color, cnt);
-                        cnt++;
-                    }
-                    break;
-                }
-                else{
-                    movable_space(pi->x, pi->y-i, color, cnt);
-                    cnt++;
-                }
-            }   
-            //LEFT
-            for(i=1;i<MAX_BOARD_X;i++){
-                if(pi->x-i<0){
-                    continue;
-                }
-                if(board[pi->y][pi->x-i]!=NULL){
-                    if(board[pi->y][pi->x-i]->isDead){
-                        movable_space(pi->x-i, pi->y,color, cnt);
-                        cnt++;
-                        continue;
-                    }
-                    if(board[pi->y][pi->x-i]->team!=team){
-                        movable_space(pi->x-i+1, pi->y, color, cnt);
-                        cnt++;
-                    }
-                    break;
-                }
-                else{
-                    movable_space(pi->x-i, pi->y, color, cnt);
-                    cnt++;
-                }
-            }
-            //RIGHT
-            for(i=1;i>MAX_BOARD_X;i++){
-                if(pi->x+i>=MAX_BOARD_X){
-                    continue;
-                }
-                if(board[pi->y][pi->x+i]!=NULL){
-                    if(board[pi->y][pi->x+i]->isDead){
-                        movable_space(pi->x+i, pi->y,color, cnt);
-                        cnt++;
-                        continue;
-                    }
-                    if(board[pi->y][pi->x+i]->team!=team){
-                        movable_space(pi->x+i-1, pi->y, color, cnt);
-                        cnt++;
-                    }
-                    break;
-                }
-                else{
-                    movable_space(pi->x+i, pi->y, color, cnt);
-                    cnt++;
-                }
-            }            
-            //DOWN_RIGHT
-            for(i=1;i>MAX_BOARD_X;i++){
-                if(pi->x+i>=MAX_BOARD_X||pi->y+i>=MAX_BOARD_Y){
-                    continue;
-                }
-                if(board[pi->y+i][pi->x+i]!=NULL){
-                    if(board[pi->y+i][pi->x+i]->isDead){
-                        movable_space(pi->x+i, pi->y+i, color, cnt);
-                        cnt++;
-                        continue;
-                    }
-                    if(board[pi->y+i][pi->x+i]->team!=team){
-                            movable_space(pi->x+i-1, pi->y+i-1, color, cnt);
-                            cnt++;
-                        }
-                        break;
-                }
-                else{
-                    movable_space(pi->x+i, pi->y+i, color, cnt);
-                    cnt++;
-                }
-            }
-            //DOWN_LEFT
-            for(i=1;i>MAX_BOARD_X;i++){
-                if(pi->x-i<0||pi->y+i>=MAX_BOARD_Y){
-                    continue;
-                }
-                if(board[pi->y+i][pi->x-i]!=NULL){
-                    if(board[pi->y+i][pi->x-i]->isDead){
-                        movable_space(pi->x-i, pi->y+i, color, cnt);
-                        cnt++;
-                        continue;
-                    }
-                    if(board[pi->y+i][pi->x-i]->team!=team){
-                            movable_space(pi->x-i+1, pi->y+i-1, color, cnt);
-                            cnt++;
-                        }
-                        break;
-                }
-                else{
-                    movable_space(pi->x-i, pi->y+i, color, cnt);
-                    cnt++;
-                }
-            }
-             //UP_RIGHT
-            for(i=1;i>MAX_BOARD_X;i++){
-                if(pi->x+i>=MAX_BOARD_X||pi->y-i<0){
-                    continue;
-                }
-                if(board[pi->y-i][pi->x+i]!=NULL){
-                    if(board[pi->y-i][pi->x+i]->isDead){
-                        movable_space(pi->x+i, pi->y-i, color, cnt);
-                        cnt++;
-                        continue;
-                    }
-                    if(board[pi->y-i][pi->x+i]->team!=team){
-                            movable_space(pi->x+i-1, pi->y-i+1, color, cnt);
-                            cnt++;
-                        }
-                        break;
-                }
-                else{
-                    movable_space(pi->x+i, pi->y-i, color, cnt);
-                    cnt++;
-                }
-            }
-             //UP_LEFT
-            for(i=1;i>MAX_BOARD_X;i++){
-                if(pi->x-i<0||pi->y-i<0){
-                    continue;
-                }
-                if(board[pi->y-i][pi->x-i]!=NULL){
-                    if(board[pi->y-i][pi->x-i]->isDead){
-                        movable_space(pi->x-i, pi->y-i, color, cnt);
-                        cnt++;
-                        continue;
-                    }
-                    if(board[pi->y-i][pi->x-i]->team!=team){
-                            movable_space(pi->x-i+1, pi->y-i+1, color, cnt);
-                            cnt++;
-                        }
-                        break;
-                }
-                else{
-                    movable_space(pi->x-i, pi->y-i, color, cnt);
-                    cnt++;
-                }
-            }
-        break;
+
         }
+
         case TYPE_ROOK: {
             //DOWN
             for(i=1;i<MAX_BOARD_Y;i++){
@@ -322,52 +148,52 @@ int print_path(Piece *pi, int team, int color){
                 }
             }
             //UP
-            for(i=1;i<MAX_BOARD_Y;i++){
-                if(pi->y-i<0){
+            for(i=-1;i>-1*MAX_BOARD_Y;i--){
+                if(pi->y+i<0){
                     continue;
                 }
-                if(board[pi->y-i][pi->x]!=NULL){
-                    if(board[pi->y-i][pi->x]->isDead){
-                        movable_space(pi->x, pi->y-i,color, cnt);
+                if(board[pi->y+i][pi->x]!=NULL){
+                    if(board[pi->y+i][pi->x]->isDead){
+                        movable_space(pi->x, pi->y+i,color, cnt);
                         cnt++;
                         continue;
                     }
-                    if(board[pi->y-i][pi->x]->team!=team){
-                        movable_space(pi->x, pi->y-i+1, color, cnt);
+                    if(board[pi->y+i][pi->x]->team!=team){
+                        movable_space(pi->x, pi->y+i+1, color, cnt);
                         cnt++;
                     }
                     break;
                 }
                 else{
-                    movable_space(pi->x, pi->y-i, color, cnt);
+                    movable_space(pi->x, pi->y+i, color, cnt);
                     cnt++;
                 }
             }   
             //LEFT
-            for(i=1;i<MAX_BOARD_X;i++){
-                if(pi->x-i<0){
+            for(i=-1;i>-1*MAX_BOARD_X;i--){
+                if(pi->x+i<0||pi->x+i>=MAX_BOARD_X){
                     continue;
                 }
-                if(board[pi->y][pi->x-i]!=NULL){
-                    if(board[pi->y][pi->x-i]->isDead){
-                        movable_space(pi->x-i, pi->y,color, cnt);
+                if(board[pi->y][pi->x+i]!=NULL){
+                    if(board[pi->y][pi->x+i]->isDead){
+                        movable_space(pi->x+i, pi->y,color, cnt);
                         cnt++;
                         continue;
                     }
-                    if(board[pi->y][pi->x-i]->team!=team){
-                        movable_space(pi->x-i+1, pi->y, color, cnt);
+                    if(board[pi->y][pi->x+i]->team!=team){
+                        movable_space(pi->x+i+1, pi->y, color, cnt);
                         cnt++;
                     }
                     break;
                 }
                 else{
-                    movable_space(pi->x-i, pi->y, color, cnt);
+                    movable_space(pi->x+i, pi->y, color, cnt);
                     cnt++;
                 }
             }
             //RIGHT
             for(i=1;i>MAX_BOARD_X;i++){
-                if(pi->x+i>=MAX_BOARD_X){
+                if(pi->x+i<0||pi->x+i>=MAX_BOARD_X){
                     continue;
                 }
                 if(board[pi->y][pi->x+i]!=NULL){
@@ -387,99 +213,98 @@ int print_path(Piece *pi, int team, int color){
                     cnt++;
                 }
             }
-        break;             
+            break;             
         }
 
         case TYPE_BISHOP: {
-            //DOWN_RIGHT
-            for(i=1;i>MAX_BOARD_X;i++){
-                if(pi->x+i>=MAX_BOARD_X||pi->y+i>=MAX_BOARD_Y){
+            //RIGHT_DOWN
+            for(i=1;i<MAX_BOARD_X;i++){
+                if(pi->x+i<0||pi->x+i>=MAX_BOARD_X){
+                    continue;
+                }
+                if(pi->y+i<0||pi->y+i>=MAX_BOARD_Y){
                     continue;
                 }
                 if(board[pi->y+i][pi->x+i]!=NULL){
                     if(board[pi->y+i][pi->x+i]->isDead){
                         movable_space(pi->x+i, pi->y+i, color, cnt);
                         cnt++;
+                    }
+                    if(board[pi->y+1][pi->x+1]->team==team){
                         continue;
                     }
-                    if(board[pi->y+i][pi->x+i]->team!=team){
-                            movable_space(pi->x+i-1, pi->y+i-1, color, cnt);
-                            cnt++;
-                        }
-                        break;
-                }
-                else{
-                    movable_space(pi->x+i, pi->y+i, color, cnt);
-                    cnt++;
+                    else if(board[pi->y+i][pi->x+i]->team==team){
+                        movable_space(pi->x+i-1,pi->y+i-1,color, cnt);
+                        cnt++;
+                    }
                 }
             }
-            //DOWN_LEFT
-            for(i=1;i>MAX_BOARD_X;i++){
-                if(pi->x-i<0||pi->y+i>=MAX_BOARD_Y){
+            //RIGHT_UP
+            for(i=1;i<MAX_BOARD_X;i++){
+                if(pi->x+i<0||pi->x+i>=MAX_BOARD_X){
+                    continue;
+                }
+                if(pi->y+i<0||pi->y+i>=MAX_BOARD_Y){
+                    continue;
+                }
+                if(board[pi->y-i][pi->x+i]!=NULL){
+                    if(board[pi->y-i][pi->x+i]->isDead){
+                        movable_space(pi->x-i, pi->y+i, color, cnt);
+                        cnt++;
+                    }
+                    if(board[pi->y-1][pi->x+1]->team==team){
+                        continue;
+                    }
+                    else if(board[pi->y-i][pi->x+i]->team==team){
+                        movable_space(pi->x+i-1,pi->y-i+1,color, cnt);
+                        cnt++;
+                    }
+                }
+            }
+            //LEFT_DOWN
+            for(i=1;i<MAX_BOARD_X;i++){
+                if(pi->x+i<0||pi->x+i>=MAX_BOARD_X){
+                    continue;
+                }
+                if(pi->y+i<0||pi->y+i>=MAX_BOARD_Y){
                     continue;
                 }
                 if(board[pi->y+i][pi->x-i]!=NULL){
                     if(board[pi->y+i][pi->x-i]->isDead){
                         movable_space(pi->x-i, pi->y+i, color, cnt);
                         cnt++;
+                    }
+                    if(board[pi->y+1][pi->x-1]->team==team){
                         continue;
                     }
-                    if(board[pi->y+i][pi->x-i]->team!=team){
-                            movable_space(pi->x-i+1, pi->y+i-1, color, cnt);
-                            cnt++;
-                        }
-                        break;
-                }
-                else{
-                    movable_space(pi->x-i, pi->y+i, color, cnt);
-                    cnt++;
+                    else if(board[pi->y+i][pi->x-i]->team==team){
+                        movable_space(pi->x-i+1,pi->y+i-1,color, cnt);
+                        cnt++;
+                    }
                 }
             }
-             //UP_RIGHT
-            for(i=1;i>MAX_BOARD_X;i++){
-                if(pi->x+i>=MAX_BOARD_X||pi->y-i<0){
+            //LEFT_UP
+            for(i=1;i<MAX_BOARD_X;i++){
+                if(pi->x+i<0||pi->x+i>=MAX_BOARD_X){
                     continue;
                 }
-                if(board[pi->y-i][pi->x+i]!=NULL){
-                    if(board[pi->y-i][pi->x+i]->isDead){
-                        movable_space(pi->x+i, pi->y-i, color, cnt);
-                        cnt++;
-                        continue;
-                    }
-                    if(board[pi->y-i][pi->x+i]->team!=team){
-                            movable_space(pi->x+i-1, pi->y-i+1, color, cnt);
-                            cnt++;
-                        }
-                        break;
-                }
-                else{
-                    movable_space(pi->x+i, pi->y-i, color, cnt);
-                    cnt++;
-                }
-            }
-            //UP_LEFT
-            for(i=1;i>MAX_BOARD_X;i++){
-                if(pi->x-i<0||pi->y-i<0){
+                if(pi->y+i<0||pi->y+i>=MAX_BOARD_Y){
                     continue;
                 }
                 if(board[pi->y-i][pi->x-i]!=NULL){
                     if(board[pi->y-i][pi->x-i]->isDead){
-                        movable_space(pi->x-i, pi->y-i, color, cnt);
+                        movable_space(pi->x+i, pi->y+i, color, cnt);
                         cnt++;
+                    }
+                    if(board[pi->y-1][pi->x-1]->team==team){
                         continue;
                     }
-                    if(board[pi->y-i][pi->x-i]->team!=team){
-                            movable_space(pi->x-i+1, pi->y-i+1, color, cnt);
-                            cnt++;
-                        }
-                        break;
-                }
-                else{
-                    movable_space(pi->x-i, pi->y-i, color, cnt);
-                    cnt++;
+                    else if(board[pi->y-i][pi->x-i]->team==team){
+                        movable_space(pi->x-i+1,pi->y-i+1,color, cnt);
+                        cnt++;
+                    }
                 }
             }
-        break;
         }
 
         case TYPE_PAWN: {
