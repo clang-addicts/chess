@@ -4,8 +4,9 @@
 #include <conio.h>
 #include <unistd.h>
 
-#include "log.h"
 #include "screen.h"
+#include "log.h"
+
 
 //////////////////////////////////////////////////
 // definition
@@ -31,6 +32,7 @@ typedef struct _piece {
     int y;
     int team;
     int moved;
+    int path = 0;
 }Piece;
 
 typedef struct _player{
@@ -83,6 +85,7 @@ void movable_space(int x, int y, int color, int cnt) {
     path[cnt].y = y;
     setColor(color);
     gotoXY(calcx(x)+6,calcy(y)+1);
+    board[y][x]->path = 1;
     printf(" ");
 }
 
@@ -833,6 +836,17 @@ void piece_move(){
                             //     }
                             // }
                         }
+                        // else if (path_count > 0 && board[ArrY][ArrX]->path == 1){
+                            
+                        //     int i;
+                        //     int j;
+                        //     path_count = 0;
+                        //     for(i = 0; i < MAX_BOARD_Y; i++){
+                        //         for(j = 0; j < MAX_BOARD_X; j++){
+                        //             board[i][j]->path = 0;
+                        //         }
+                        //     }
+                        // }
                     }
                     break;
             }
