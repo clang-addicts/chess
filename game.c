@@ -85,7 +85,11 @@ void movable_space(int x, int y, int color, int cnt) {
     path[cnt].y = y;
     setColor(color);
     gotoXY(calcx(x)+6,calcy(y)+1);
-    board[y][x]->path = 1;
+
+    if(board[y][x] != NULL) {
+        board[y][x]->path = 1;
+    }
+
     printf(" ");
 }
 
@@ -490,6 +494,7 @@ int print_path(Piece *pi, int team, int color){
                 if(pi->y+1 >= MAX_BOARD_Y){
                     break;
                 }
+
                 // check front space 
                 if (board[pi->y+1][pi->x] == NULL) {
                     movable_space(pi->x, pi->y+1, color, cnt);
@@ -819,7 +824,8 @@ void piece_move(){
                                 else if(curTeam == TEAM_WHITE){
                                     curTeam = TEAM_BLACK;
                                 }
-                            }//좀이따 지움
+                            }
+                            //좀이따 지움
 
                             // if(path_count == 0){
                             //     print_path(board[ArrY][ArrX], curTeam, BF_RED_BLACK);
