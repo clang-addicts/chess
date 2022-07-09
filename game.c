@@ -32,7 +32,7 @@ typedef struct _piece {
     int y;
     int team;
     int moved;
-    int path = 0;
+    int path;
 }Piece;
 
 typedef struct _player{
