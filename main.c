@@ -101,6 +101,7 @@ int main(int argc, char **argv)
             }
             default: { //MENU_EXIT
                 log(LOG_NOTICE, "selected %s", get_menu_selection_string(loop)); 
+                deinit_log();
                 return 0;
             }
         }

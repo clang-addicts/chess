@@ -61,6 +61,7 @@ void wait_for_opponet()
     // start listening to TCP socket
 	// https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-listen
     res = listen(server_socket, SOMAXCONN);
+    log(LOG_INFO, "[server] now listening for player");
     if (res == SOCKET_ERROR) {
         logd(LOG_ERR, "failed with error: %ld", WSAGetLastError());
         goto error_server;
