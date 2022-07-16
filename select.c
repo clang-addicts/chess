@@ -276,7 +276,7 @@ int select_network_mode()
                 break;
             }
             case KEY_ESC:
-                current = NMODE_EXIT;
+                current = NMODE_UNSELECTED;
             case KEY_ENTER: {
                 flag_selected = 1;
                 break;
@@ -289,6 +289,6 @@ int select_network_mode()
     switch(current) {
         case 1: return NMODE_SERVER;
         case 2: return NMODE_CLIENT;
-        default: return NMODE_EXIT;
+        default: return NMODE_UNSELECTED;
     }
 }

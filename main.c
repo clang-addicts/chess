@@ -22,26 +22,48 @@ static const char* get_menu_selection_string(int menu_selection)
     }
 }
 
-static int menu() {
-    screen_menu();
-    return select_menu();
+static int menu()
+{
+    int ret;
+
+
+    return ret;
 }
 
 int main(int argc, char **argv)
 {
-    int loop = 0;
+//////////////////////////////////////////////////////////////////////////
+// variable init
+//////////////////////////////////////////////////////////////////////////
+    PINFO *p = NULL;
     void *opponet_info;
     int mode = -1;
 
+//////////////////////////////////////////////////////////////////////////
+// initialization
+//////////////////////////////////////////////////////////////////////////
+    log(LOG_NOTICE, "initializing..."); 
+    // init log
     init_log();
-    log(LOG_NOTICE, "starting program"); 
 
+    // init program info
+    p = (PINFO*)malloc(sizeof(PINFO));
+    memset(p, 0, sizeof(PINFO));
+    p->mode_menu = MENU_UNSELECTED;
+    p->mode_network = NMODE_UNSELECTED;
+    p->mode_gamemode = GAMEMODE_UNSELECTED;
+
+//////////////////////////////////////////////////////////////////////////
+// program loop
+//////////////////////////////////////////////////////////////////////////
     log(LOG_NOTICE, "starting main switch loop, opening menu"); 
     while(true) {
-        switch( (loop?loop:(loop=menu())) ) {
+        screen_menu();
+        p->mode_menu = select_menu();
+        log(LOG_NOTICE, "selected %s", get_menu_selection_string(p->mode_menu));
+
+        switch(p->mode_menu) {
             case MENU_PLAY_ONLINE: {
-                log(LOG_NOTICE, "selected %s", get_menu_selection_string(loop)); 
-                loop = 0;
 
                 screen_network_mode();
                 mode = select_network_mode();
@@ -60,12 +82,12 @@ int main(int argc, char **argv)
                         break;
                     }
                     default: {
-                        loop = 1;
+                        p->mode_menu = 1;
                         break;
                     }
                 }
 
-                if(loop) { // return to main menu
+                if(p->mode_menu) { // return to main menu
                     break;
                 }
 
@@ -73,34 +95,34 @@ int main(int argc, char **argv)
                 if(opponet_info != NULL) {
                     screen_board();
                     screen_select_order();
-                    loop = select_play_order(GAMEMODE_PLAYER, &opponet_info);
+                    p->mode_menu = select_play_order(GAMEMODE_PLAYER, &opponet_info);
                 } else {
-                    loop = 0;
+                    p->mode_menu = 0;
                 }
                 break;
             }
             case MENU_PLAY_SINGLE: {
-                log(LOG_NOTICE, "selected %s", get_menu_selection_string(loop)); 
+                log(LOG_NOTICE, "selected %s", get_menu_selection_string(p->mode_menu)); 
                 screen_board();
                 screen_select_order();
                 game();
-                loop = select_play_order(GAMEMODE_CPU, NULL);
+                p->mode_menu = select_play_order(GAMEMODE_CPU, NULL);
                 break;
             }
             case MENU_SETTINGS: {
-                log(LOG_NOTICE, "selected %s", get_menu_selection_string(loop)); 
+                log(LOG_NOTICE, "selected %s", get_menu_selection_string(p->mode_menu)); 
                 screen_settings();
-                loop = select_settings(); // should always return 0
+                p->mode_menu = select_settings(); // should always return 0
                 break;
             }
             case MENU_INFO: {
-                log(LOG_NOTICE, "selected %s", get_menu_selection_string(loop)); 
+                log(LOG_NOTICE, "selected %s", get_menu_selection_string(p->mode_menu)); 
                 screen_info();
-                loop = select_info(); // should always return 0
+                p->mode_menu = select_info(); // should always return 0
                 break;
             }
-            default: { //MENU_EXIT
-                log(LOG_NOTICE, "selected %s", get_menu_selection_string(loop)); 
+            case MENU_EXIT: { //MENU_EXIT
+                log(LOG_NOTICE, "selected %s", get_menu_selection_string(p->mode_menu)); 
                 deinit_log();
                 return 0;
             }

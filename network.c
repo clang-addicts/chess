@@ -79,7 +79,7 @@ void wait_for_opponet()
     do {
         // wait until client sends data
         // https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-recv
-        res = recv(client_socket, buf, strlen(buf), 0);
+        res = recv(client_socket, buf, sizeof(buf), 0);
         if(res > 0) {
             logd(LOG_DEBUG, "[Server] received: %d bytes", res);
             logd(LOG_DEBUG, "[Server] received string: %s", buf);
