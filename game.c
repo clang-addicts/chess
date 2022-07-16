@@ -816,8 +816,7 @@ void piece_move(){
                             if(print_path(board[ArrY][ArrX], curTeam, BF_RED_BLACK) > 0) {
                                 // team change
                                 // update score
-                                // kill malr
-                                
+                                // kill malr                    
                                 if(curTeam == TEAM_BLACK){
                                     curTeam = TEAM_WHITE;
                                 }
@@ -825,33 +824,11 @@ void piece_move(){
                                     curTeam = TEAM_BLACK;
                                 }
                             }
-                            //좀이따 지움
-
-                            // if(path_count == 0){
-                            //     print_path(board[ArrY][ArrX], curTeam, BF_RED_BLACK);
-                            // }
-                            // else
-                            // if(path_count > 0){
-                            //     print_move(board[ArrY][ArrX]);
-
-                            //     if(curTeam == TEAM_BLACK){
-                            //         curTeam = TEAM_WHITE;
-                            //     }
-                            //     else if(curTeam == TEAM_WHITE){
-                            //         curTeam = TEAM_BLACK;
-                            //     }
-                            // }
+                            //print_path(board[ArrY][ArrX], curTeam, BF_RED_BLACK);
+                        
                         }
-                        // else if (path_count > 0 && board[ArrY][ArrX]->path == 1){
-                            
-                        //     int i;
-                        //     int j;
-                        //     path_count = 0;
-                        //     for(i = 0; i < MAX_BOARD_Y; i++){
-                        //         for(j = 0; j < MAX_BOARD_X; j++){
-                        //             board[i][j]->path = 0;
-                        //         }
-                        //     }
+                        // if(path_count > 0 && board[ArrY][ArrX]->path == 1){
+
                         // }
                     }
                     break;
@@ -885,6 +862,7 @@ void white_win(){
 //     }
 // }
 
+//
 void print_default(Player *p){
     King(calcx(p->King.x),calcy(p->King.y),p->color == TEAM_BLACK? BF_BLACK_WHITE : BF_LWHITE_BLACK);
     Queen(calcx(p->Queen.x),calcy(p->Queen.y),p->color == TEAM_BLACK? BF_BLACK_WHITE : BF_LWHITE_BLACK);
